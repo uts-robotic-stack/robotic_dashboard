@@ -36,7 +36,8 @@ class _HomeScreenState extends State<HomeScreen> {
                   Padding(
                     padding: EdgeInsets.all(defaultPadding),
                     child: DeviceInfo(),
-                  )
+                  ),
+                  ControllerDashboard()
                 ],
               ),
             ),
@@ -61,25 +62,51 @@ class DeviceInfo extends StatelessWidget {
         decoration: BoxDecoration(
             color: secondaryColor,
             borderRadius: const BorderRadius.all(Radius.circular(10)),
-            border: Border.all(color: const Color.fromARGB(255, 118, 67, 67))),
-        child: const Column(children: [
-          Padding(
-            padding: EdgeInsets.only(bottom: 4.0, left: 12.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  "robotics_default",
-                  style: TextStyle(fontSize: 18),
+            border: Border.all(color: Color.fromARGB(255, 193, 193, 193))),
+        child: const Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: EdgeInsets.only(bottom: 4.0, left: 12.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "robotics_default",
+                      style: TextStyle(fontSize: 18),
+                    ),
+                    ActionSettings(),
+                  ],
                 ),
-                ActionSettings(),
-              ],
-            ),
-          ),
-          SizedBox(
-            height: defaultPadding,
-          ),
-        ]),
+              ),
+              SizedBox(
+                height: defaultPadding,
+              ),
+              Text(
+                "Device: ",
+                style: TextStyle(fontSize: 16),
+              ),
+              Text(
+                "Last on: ",
+                style: TextStyle(fontSize: 16),
+              ),
+              Text(
+                "Duration: ",
+                style: TextStyle(fontSize: 16),
+              ),
+              Text(
+                "Software version: ",
+                style: TextStyle(fontSize: 16),
+              ),
+              Text(
+                "IP address: ",
+                style: TextStyle(fontSize: 16),
+              ),
+              Text(
+                "MAC address: ",
+                style: TextStyle(fontSize: 16),
+              ),
+            ]),
       ),
     );
   }
@@ -210,5 +237,167 @@ abstract class MenuItems {
       case MenuItems.shutdown:
         break;
     }
+  }
+}
+
+class ControllerDashboard extends StatelessWidget {
+  const ControllerDashboard({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: defaultPadding),
+        child: Container(
+          padding: const EdgeInsets.all(defaultPadding),
+          decoration: BoxDecoration(
+              color: secondaryColor,
+              borderRadius: const BorderRadius.all(Radius.circular(10)),
+              border:
+                  Border.all(color: const Color.fromARGB(255, 107, 107, 107))),
+          child: Column(
+            children: [
+              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                const Padding(
+                  padding: EdgeInsets.all(defaultPadding / 2),
+                  child: Text(
+                    "Services",
+                    style: TextStyle(color: Colors.black, fontSize: 14.0),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: defaultPadding / 2),
+                  child: Row(
+                    children: [
+                      IconButton(
+                        onPressed: () {},
+                        icon: const Icon(
+                          Icons.play_arrow,
+                          size: 20.0,
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: () {},
+                        icon: const Icon(
+                          Icons.pause,
+                          size: 20.0,
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: () {},
+                        icon: const Icon(
+                          Icons.stop,
+                          size: 20.0,
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: () {},
+                        icon: const Icon(
+                          Icons.restart_alt,
+                          size: 20.0,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ]),
+              const SizedBox(
+                height: defaultPadding,
+              ),
+              Divider(
+                indent: 0.0,
+                endIndent: 0.0,
+              ),
+              Expanded(
+                child: ListView.builder(
+                  itemCount: 3,
+                  itemBuilder: (context, index) {
+                    return const ServiceCardWidget();
+                  },
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class ServiceCardWidget extends StatelessWidget {
+  const ServiceCardWidget({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Container(
+            height: 120,
+            padding: const EdgeInsets.all(defaultPadding),
+            decoration: BoxDecoration(
+                color: secondaryColor,
+                borderRadius: const BorderRadius.all(Radius.circular(10)),
+                border: Border.all(color: const Color.fromARGB(26, 0, 0, 0))),
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Padding(
+                      padding: EdgeInsets.all(5),
+                      child: Text(
+                        "Logs",
+                        style: TextStyle(color: Colors.black, fontSize: 14.0),
+                      ),
+                    ),
+                    Row(
+                      children: [
+                        IconButton(
+                          onPressed: () {},
+                          icon: const Icon(
+                            Icons.play_arrow,
+                            size: 17.0,
+                          ),
+                        ),
+                        IconButton(
+                          onPressed: () {},
+                          icon: const Icon(
+                            Icons.pause,
+                            size: 17.0,
+                          ),
+                        ),
+                        IconButton(
+                          onPressed: () {},
+                          icon: const Icon(
+                            Icons.stop,
+                            size: 17.0,
+                          ),
+                        ),
+                        IconButton(
+                          onPressed: () {},
+                          icon: const Icon(
+                            Icons.restart_alt,
+                            size: 17.0,
+                          ),
+                        ),
+                        IconButton(
+                          onPressed: () {},
+                          icon: const Icon(
+                            Icons.document_scanner,
+                            size: 17.0,
+                          ),
+                        )
+                      ],
+                    ),
+                  ],
+                ),
+              ],
+            )),
+        const SizedBox(height: defaultPadding),
+      ],
+    );
   }
 }
