@@ -5,6 +5,7 @@ import 'package:robotics_dashboard/view/components/dashboard_header.dart';
 import 'package:robotics_dashboard/view/components/log_viewer.dart';
 import 'package:robotics_dashboard/view/screens/side_menu.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:robotics_dashboard/view/widgets/service_card.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -37,7 +38,10 @@ class _HomeScreenState extends State<HomeScreen> {
                     padding: EdgeInsets.all(defaultPadding),
                     child: DeviceInfo(),
                   ),
-                  ControllerDashboard()
+                  ControllerDashboard(),
+                  SizedBox(
+                    height: defaultPadding,
+                  ),
                 ],
               ),
             ),
@@ -56,7 +60,7 @@ class DeviceInfo extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 350,
+      height: 300,
       child: Container(
         padding: const EdgeInsets.all(defaultPadding),
         decoration: BoxDecoration(
@@ -100,10 +104,6 @@ class DeviceInfo extends StatelessWidget {
               ),
               Text(
                 "IP address: ",
-                style: TextStyle(fontSize: 16),
-              ),
-              Text(
-                "MAC address: ",
                 style: TextStyle(fontSize: 16),
               ),
             ]),
@@ -307,15 +307,11 @@ class ControllerDashboard extends StatelessWidget {
               const SizedBox(
                 height: defaultPadding,
               ),
-              Divider(
-                indent: 0.0,
-                endIndent: 0.0,
-              ),
               Expanded(
                 child: ListView.builder(
                   itemCount: 3,
                   itemBuilder: (context, index) {
-                    return const ServiceCardWidget();
+                    return const ServiceCard();
                   },
                 ),
               ),
@@ -323,81 +319,6 @@ class ControllerDashboard extends StatelessWidget {
           ),
         ),
       ),
-    );
-  }
-}
-
-class ServiceCardWidget extends StatelessWidget {
-  const ServiceCardWidget({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Container(
-            height: 120,
-            padding: const EdgeInsets.all(defaultPadding),
-            decoration: BoxDecoration(
-                color: secondaryColor,
-                borderRadius: const BorderRadius.all(Radius.circular(10)),
-                border: Border.all(color: const Color.fromARGB(26, 0, 0, 0))),
-            child: Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Padding(
-                      padding: EdgeInsets.all(5),
-                      child: Text(
-                        "Logs",
-                        style: TextStyle(color: Colors.black, fontSize: 14.0),
-                      ),
-                    ),
-                    Row(
-                      children: [
-                        IconButton(
-                          onPressed: () {},
-                          icon: const Icon(
-                            Icons.play_arrow,
-                            size: 17.0,
-                          ),
-                        ),
-                        IconButton(
-                          onPressed: () {},
-                          icon: const Icon(
-                            Icons.pause,
-                            size: 17.0,
-                          ),
-                        ),
-                        IconButton(
-                          onPressed: () {},
-                          icon: const Icon(
-                            Icons.stop,
-                            size: 17.0,
-                          ),
-                        ),
-                        IconButton(
-                          onPressed: () {},
-                          icon: const Icon(
-                            Icons.restart_alt,
-                            size: 17.0,
-                          ),
-                        ),
-                        IconButton(
-                          onPressed: () {},
-                          icon: const Icon(
-                            Icons.document_scanner,
-                            size: 17.0,
-                          ),
-                        )
-                      ],
-                    ),
-                  ],
-                ),
-              ],
-            )),
-        const SizedBox(height: defaultPadding),
-      ],
     );
   }
 }
