@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:robotics_dashboard/utils/constants.dart';
 import 'package:robotics_dashboard/view/screens/homescreen.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -13,12 +14,12 @@ class RoboticsDashboard extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Device Management Dashboard',
+      title: 'Robotics Dashboard',
       theme: ThemeData.light().copyWith(
-        scaffoldBackgroundColor: Colors.white,
+        scaffoldBackgroundColor: bgColor,
         textTheme: GoogleFonts.poppinsTextTheme(Theme.of(context).textTheme)
             .apply(bodyColor: Colors.black),
-        canvasColor: Colors.white60,
+        canvasColor: primaryColor,
       ),
       home: const HomeScreen(),
     );
