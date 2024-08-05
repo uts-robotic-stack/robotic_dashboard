@@ -4,11 +4,13 @@ import 'dart:convert';
 import 'dart:async';
 
 import 'package:robotics_dashboard/model/device_info.dart';
+import 'package:robotics_dashboard/utils/common_utils.dart';
 
 class DeviceInfoList extends StatefulWidget {
   const DeviceInfoList({Key? key}) : super(key: key);
 
   @override
+  // ignore: library_private_types_in_public_api
   _DeviceInfoListState createState() => _DeviceInfoListState();
 }
 
@@ -43,7 +45,7 @@ class _DeviceInfoListState extends State<DeviceInfoList> {
   ];
 
   Timer? _timer;
-  final Duration _refreshDuration = Duration(minutes: 5);
+  final Duration _refreshDuration = const Duration(seconds: 10);
 
   @override
   void initState() {
@@ -75,12 +77,12 @@ class _DeviceInfoListState extends State<DeviceInfoList> {
           {"icon": Icons.computer, "mainText": device.type, "subText": "Type"},
           {
             "icon": Icons.calendar_today,
-            "mainText": device.lastOn,
+            "mainText": formatDate(device.lastOn),
             "subText": "Last on"
           },
           {
             "icon": Icons.watch_later_outlined,
-            "mainText": "${device.onDuration} seconds",
+            "mainText": formatDuration(device.onDuration),
             "subText": "On duration"
           },
           {
@@ -101,10 +103,7 @@ class _DeviceInfoListState extends State<DeviceInfoList> {
           },
         ];
       });
-    } else {
-      // Handle server error
-      print('Failed to load data');
-    }
+    } else {}
   }
 
   void _startPeriodicFetch() {
@@ -120,7 +119,7 @@ class _DeviceInfoListState extends State<DeviceInfoList> {
         return GridView.builder(
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: crossAxisCount,
-            childAspectRatio: 5,
+            childAspectRatio: constraints.maxWidth < 600 ? 8 : 5,
             crossAxisSpacing: 2,
             mainAxisSpacing: 8,
           ),

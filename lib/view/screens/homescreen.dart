@@ -60,7 +60,7 @@ class DeviceInfo extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(defaultPadding),
       child: SizedBox(
-        height: 300,
+        height: 315,
         child: Container(
           padding: const EdgeInsets.all(defaultPadding),
           decoration: BoxDecoration(
@@ -123,51 +123,24 @@ class ControllerDashboard extends StatelessWidget {
                   Border.all(color: const Color.fromARGB(255, 107, 107, 107))),
           child: Column(
             children: [
-              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                const Padding(
-                  padding: EdgeInsets.all(defaultPadding / 2),
-                  child: Text(
-                    "Services",
-                    style: TextStyle(color: Colors.black, fontSize: 14.0),
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: defaultPadding / 2),
-                  child: Row(
-                    children: [
-                      IconButton(
-                        onPressed: () {},
-                        icon: const Icon(
-                          Icons.play_arrow,
-                          size: 20.0,
-                        ),
+              const Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.all(defaultPadding / 2),
+                      child: Text(
+                        "Services",
+                        style: TextStyle(color: Colors.black, fontSize: 14.0),
                       ),
-                      IconButton(
-                        onPressed: () {},
-                        icon: const Icon(
-                          Icons.pause,
-                          size: 20.0,
-                        ),
+                    ),
+                    Padding(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: defaultPadding / 2),
+                      child: Row(
+                        children: [],
                       ),
-                      IconButton(
-                        onPressed: () {},
-                        icon: const Icon(
-                          Icons.stop,
-                          size: 20.0,
-                        ),
-                      ),
-                      IconButton(
-                        onPressed: () {},
-                        icon: const Icon(
-                          Icons.restart_alt,
-                          size: 20.0,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ]),
+                    ),
+                  ]),
               const SizedBox(
                 height: defaultPadding,
               ),

@@ -33,35 +33,35 @@ class ServiceCard extends StatelessWidget {
                           onPressed: () {},
                           icon: const Icon(
                             Icons.play_arrow,
-                            size: 17.0,
+                            size: 20.0,
                           ),
                         ),
                         IconButton(
                           onPressed: () {},
                           icon: const Icon(
                             Icons.pause,
-                            size: 17.0,
+                            size: 20.0,
                           ),
                         ),
                         IconButton(
                           onPressed: () {},
                           icon: const Icon(
                             Icons.stop,
-                            size: 17.0,
+                            size: 20.0,
                           ),
                         ),
                         IconButton(
                           onPressed: () {},
                           icon: const Icon(
-                            Icons.restart_alt,
-                            size: 17.0,
+                            Icons.my_library_books_outlined,
+                            size: 20.0,
                           ),
                         ),
                         IconButton(
                           onPressed: () {},
                           icon: const Icon(
-                            Icons.document_scanner,
-                            size: 17.0,
+                            Icons.settings,
+                            size: 20.0,
                           ),
                         )
                       ],
