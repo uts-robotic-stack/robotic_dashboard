@@ -138,22 +138,22 @@ class _DeviceInfoListState extends State<DeviceInfoList> {
                       color: const Color.fromARGB(255, 126, 126, 126),
                     ),
                   ),
-                  SizedBox(width: 16),
+                  const SizedBox(width: 16),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      SelectableText(
-                        item["mainText"] as String,
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
                       Text(
                         item["subText"] as String,
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 12,
                           color: Colors.grey,
+                        ),
+                      ),
+                      SelectableText(
+                        item["mainText"] as String,
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
                     ],

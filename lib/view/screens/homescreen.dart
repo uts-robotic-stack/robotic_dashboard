@@ -4,9 +4,9 @@ import 'package:robotics_dashboard/utils/constants.dart';
 import 'package:robotics_dashboard/view/components/dashboard_header.dart';
 import 'package:robotics_dashboard/view/components/device_info.dart';
 import 'package:robotics_dashboard/view/components/log_viewer.dart';
+import 'package:robotics_dashboard/view/components/service_manager.dart';
 import 'package:robotics_dashboard/view/screens/side_menu.dart';
 import 'package:robotics_dashboard/view/widgets/dropdown_button.dart';
-import 'package:robotics_dashboard/view/widgets/service_card.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -121,37 +121,27 @@ class ControllerDashboard extends StatelessWidget {
               borderRadius: const BorderRadius.all(Radius.circular(10)),
               border:
                   Border.all(color: const Color.fromARGB(255, 107, 107, 107))),
-          child: Column(
+          child: const Column(
             children: [
-              const Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.all(defaultPadding / 2),
-                      child: Text(
-                        "Services",
-                        style: TextStyle(color: Colors.black, fontSize: 14.0),
-                      ),
-                    ),
-                    Padding(
-                      padding:
-                          EdgeInsets.symmetric(horizontal: defaultPadding / 2),
-                      child: Row(
-                        children: [],
-                      ),
-                    ),
-                  ]),
-              const SizedBox(
+              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                Padding(
+                  padding: EdgeInsets.all(defaultPadding / 2),
+                  child: Text(
+                    "Services",
+                    style: TextStyle(color: Colors.black, fontSize: 14.0),
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: defaultPadding / 2),
+                  child: Row(
+                    children: [],
+                  ),
+                ),
+              ]),
+              SizedBox(
                 height: defaultPadding,
               ),
-              Expanded(
-                child: ListView.builder(
-                  itemCount: 3,
-                  itemBuilder: (context, index) {
-                    return const ServiceCard();
-                  },
-                ),
-              ),
+              Expanded(child: ServiceManager()),
             ],
           ),
         ),

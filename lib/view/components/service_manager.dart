@@ -1,60 +1,206 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'dart:async';
 import 'package:robotics_dashboard/utils/constants.dart';
+import 'package:robotics_dashboard/model/docker/service.dart';
 
-class ServiceCardManager extends StatefulWidget {
-  const ServiceCardManager({Key? key}) : super(key: key);
+class ServiceManager extends StatefulWidget {
+  const ServiceManager({Key? key}) : super(key: key);
 
   @override
-  _ServiceCardManagerState createState() => _ServiceCardManagerState();
+  _ServiceManagerState createState() => _ServiceManagerState();
 }
 
-class _ServiceCardManagerState extends State<ServiceCardManager> {
-  late Future<List<ServiceData>> _serviceData;
+class _ServiceManagerState extends State<ServiceManager> {
+  final bool isAdmin = false; // Set this based on user role
+  final Map<String, Service> _services = {};
+  final List<String> _excludedServices = [];
+
+  Timer? _timer;
+  final Duration _refreshDuration = const Duration(seconds: 5);
 
   @override
   void initState() {
     super.initState();
-    _serviceData = fetchServiceData();
-  }
-
-  Future<List<ServiceData>> fetchServiceData() async {
-    final response =
-        await http.get(Uri.parse('https://example.com/api/services'));
-
-    if (response.statusCode == 200) {
-      List jsonResponse = json.decode(response.body);
-      return jsonResponse.map((data) => ServiceData.fromJson(data)).toList();
-    } else {
-      throw Exception('Failed to load service data');
-    }
+    _fetchDefaultServices();
+    _fetchExcludedServices();
+    _startPeriodicFetch();
   }
 
   @override
-  Widget build(BuildContext context) {
-    return FutureBuilder<List<ServiceData>>(
-      future: _serviceData,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        } else if (snapshot.hasError) {
-          return Text('${snapshot.error}');
-        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-          return const Text('No data available');
-        } else {
-          return ListView.builder(
-            itemCount: snapshot.data!.length,
-            itemBuilder: (context, index) {
-              return _buildServiceItem(snapshot.data![index]);
-            },
-          );
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  Future<void> _fetchDefaultServices() async {
+    final response = await http.get(
+      Uri.parse('http://localhost:8080/api/v1/supervisor/default'),
+      headers: {
+        'Authorization': 'Bearer robotics',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+      final Map<String, dynamic> servicesMap = jsonResponse['services'];
+      final Map<String, Service> services = {};
+
+      for (var entry in servicesMap.entries) {
+        services[entry.key] =
+            Service.fromJson(entry.value as Map<String, dynamic>);
+      }
+
+      setState(() {
+        _services.clear();
+        _services.addAll(services);
+      });
+    } else {
+      // print('Failed to load services with status code: ${response.statusCode}');
+    }
+  }
+
+  Future<void> _fetchExcludedServices() async {
+    final response = await http.get(
+      Uri.parse('http://localhost:8080/api/v1/supervisor/excluded'),
+      headers: {
+        'Authorization': 'Bearer robotics',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final List<dynamic> jsonResponse =
+          jsonDecode(response.body) as List<dynamic>;
+
+      // Convert the dynamic list to a List<String>
+      final List<String> services = jsonResponse.cast<String>();
+      setState(() {
+        _excludedServices.clear();
+        _excludedServices.addAll(services);
+      });
+    } else {
+      // print('Failed to load services with status code: ${response.statusCode}');
+    }
+  }
+
+  Future<void> _fetchCurrentServices() async {
+    final response = await http.get(
+      Uri.parse('http://localhost:8080/api/v1/supervisor/all'),
+      headers: {
+        'Authorization': 'Bearer robotics',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> jsonResponse = jsonDecode(response.body);
+      final Map<String, dynamic> servicesMap = jsonResponse['services'];
+      final Map<String, Service> services = {};
+
+      for (var entry in servicesMap.entries) {
+        services[entry.key] =
+            Service.fromJson(entry.value as Map<String, dynamic>);
+      }
+
+      setState(() {
+        for (var entry in services.entries) {
+          if (!_services.containsKey(entry.key) &&
+              !_excludedServices.contains(entry.key)) {
+            _services[entry.key] = entry.value;
+          }
         }
+      });
+    } else {}
+  }
+
+  void _startPeriodicFetch() {
+    _timer =
+        Timer.periodic(_refreshDuration, (Timer t) => _fetchCurrentServices());
+  }
+
+  void _showServiceSettings(Service service) {
+    // Editable controllers
+    final TextEditingController imageController =
+        TextEditingController(text: service.image);
+    final TextEditingController actionController =
+        TextEditingController(text: service.action);
+    final TextEditingController networkController =
+        TextEditingController(text: service.network ?? "");
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('${service.name} settings'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                isAdmin
+                    ? TextFormField(
+                        controller: imageController,
+                        decoration: const InputDecoration(labelText: 'Image'),
+                      )
+                    : Text('Image: ${service.image}'),
+                isAdmin
+                    ? TextFormField(
+                        controller: actionController,
+                        decoration: const InputDecoration(labelText: 'Action'),
+                      )
+                    : Text('Action: ${service.action}'),
+                isAdmin
+                    ? TextFormField(
+                        controller: networkController,
+                        decoration: const InputDecoration(labelText: 'Network'),
+                      )
+                    : Text('Network: ${service.network ?? "N/A"}'),
+                Text('TTY: ${service.tty}'),
+                Text('Privileged: ${service.privileged}'),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            if (isAdmin)
+              TextButton(
+                child: const Text('Save'),
+                onPressed: () {
+                  setState(() {
+                    // Update service settings with edited values
+                    // service.image = imageController.text;
+                    // service.action = actionController.text;
+                    // service.network = networkController.text.isNotEmpty
+                    //     ? networkController.text
+                    //     : null;
+                  });
+                  Navigator.of(context).pop();
+                  // Add code to save changes to server if needed
+                },
+              ),
+            TextButton(
+              child: const Text('Close'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
       },
     );
   }
 
-  Widget _buildServiceItem(ServiceData data) {
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+      itemCount: _services.length,
+      itemBuilder: (context, index) {
+        // Convert map entries to a list for indexed access
+        final entry = _services.entries.elementAt(index);
+        final service = entry.value;
+        return _buildServiceItem(service);
+      },
+    );
+  }
+
+  Widget _buildServiceItem(Service data) {
     return Column(
       children: [
         Container(
@@ -80,11 +226,6 @@ class _ServiceCardManagerState extends State<ServiceCardManager> {
                           style: const TextStyle(
                               color: Colors.black, fontSize: 14.0),
                         ),
-                        Text(
-                          'Status: ${data.status}',
-                          style: const TextStyle(
-                              color: Colors.black, fontSize: 12.0),
-                        ),
                       ],
                     ),
                   ),
@@ -108,24 +249,14 @@ class _ServiceCardManagerState extends State<ServiceCardManager> {
                             size: 20.0),
                       ),
                       IconButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          _showServiceSettings(data);
+                        },
                         icon: const Icon(Icons.settings, size: 20.0),
-                      )
+                      ),
                     ],
                   ),
                 ],
-              ),
-              Expanded(
-                child: ListView.builder(
-                  itemCount: data.settings.length,
-                  itemBuilder: (context, index) {
-                    return Text(
-                      data.settings[index],
-                      style:
-                          const TextStyle(color: Colors.black, fontSize: 12.0),
-                    );
-                  },
-                ),
               ),
             ],
           ),
