@@ -14,7 +14,7 @@ class ServiceManager extends StatefulWidget {
 }
 
 class _ServiceManagerState extends State<ServiceManager> {
-  final bool isAdmin = false; // Set this based on user role
+  final bool isAdmin = true; // Set this based on user role
   final Map<String, Service> _services = {};
   final List<String> _excludedServices = [];
 
@@ -112,6 +112,37 @@ class _ServiceManagerState extends State<ServiceManager> {
         }
       });
     } else {}
+  }
+
+  // Function to send HTTP request containing the current service information
+  Future<void> _loadAndRunService(Service service) async {
+    const String endpointUrl =
+        'http://localhost:8080/api/v1/supervisor/load-run'; // Replace with your actual endpoint
+
+    final Map<String, dynamic> serviceMap = {
+      'services': {
+        service.name: service.toJson(),
+      },
+    };
+
+    try {
+      final response = await http.post(
+        Uri.parse(endpointUrl),
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode(serviceMap),
+      );
+
+      if (response.statusCode == 200) {
+        // print('Service info successfully sent for ${service.name}');
+        setState(() {
+          _services[service.name]?.status = "running";
+        });
+      } else {
+        print('Failed to send service info: ${response.statusCode}');
+      }
+    } catch (error) {
+      print('Error sending service info: $error');
+    }
   }
 
   void _startPeriodicFetch() {
@@ -251,7 +282,9 @@ class _ServiceManagerState extends State<ServiceManager> {
         Padding(
           padding: EdgeInsets.symmetric(horizontal: padding),
           child: IconButton(
-            onPressed: () {},
+            onPressed: () {
+              _loadAndRunService(data);
+            },
             icon: Icon(Icons.play_arrow, size: size),
           ),
         ),
@@ -331,6 +364,20 @@ class _ServiceManagerState extends State<ServiceManager> {
     );
   }
 
+  Widget _buildServiceName(Service data) {
+    return SizedBox(
+      width: 200,
+      child: Padding(
+        padding:
+            const EdgeInsets.symmetric(vertical: 5, horizontal: defaultPadding),
+        child: Text(
+          data.name,
+          style: const TextStyle(color: Colors.black, fontSize: 14.0),
+        ),
+      ),
+    );
+  }
+
   Widget _buildServiceItem(Service data) {
     return Column(
       children: [
@@ -346,20 +393,8 @@ class _ServiceManagerState extends State<ServiceManager> {
             children: [
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                // crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  SizedBox(
-                    width: 200,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 5, horizontal: defaultPadding),
-                      child: Text(
-                        data.name,
-                        style: const TextStyle(
-                            color: Colors.black, fontSize: 14.0),
-                      ),
-                    ),
-                  ),
+                  _buildServiceName(data),
                   _buildStatusBar(data),
                   _buildCommandKeys(data),
                 ],
