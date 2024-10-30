@@ -245,71 +245,48 @@ class _ServiceManagerState extends State<ServiceManager> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text(
-            '${service.name} settings',
-            style: const TextStyle(fontSize: 20),
+            '${service.name}',
+            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
           content: SizedBox(
             width: 450,
-            height: 200,
-            child: SingleChildScrollView(
-              child: ListBody(
-                children: <Widget>[
-                  if (isAdmin) ...[
-                    ...envVarControllers.entries.map((entry) => Row(
-                          children: [
-                            Expanded(
-                              flex: 1,
-                              child: Text('${entry.key}:',
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16.0)),
-                            ),
-                            Expanded(
-                              flex: 2,
-                              child: Padding(
-                                padding: const EdgeInsets.only(left: 8.0),
-                                child: TextFormField(
-                                  controller: entry.value,
-                                  decoration: const InputDecoration(
-                                    border: UnderlineInputBorder(),
-                                    contentPadding: EdgeInsets.symmetric(
-                                        vertical: 0, horizontal: 0),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        )),
-                  ] else ...[
-                    ...service.envVars!.entries.map((entry) => Column(
-                          children: [
-                            Row(
-                              children: [
-                                Expanded(
-                                  flex: 1,
-                                  child: Text('${entry.key}:',
-                                      style: const TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 16.0)),
-                                ),
-                                Expanded(
-                                  flex: 2,
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(left: 8.0),
-                                    child: SelectableText(
-                                      entry.value,
-                                      style: const TextStyle(fontSize: 16.0),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(
-                              height: 12.0,
-                            )
-                          ],
-                        )),
-                  ],
+            height: 300,
+            child: DefaultTabController(
+              length: 3,
+              child: Column(
+                children: [
+                  const TabBar(
+                    tabs: [
+                      Tab(
+                        child: Text(
+                          'Settings',
+                          style: TextStyle(fontSize: 16),
+                        ),
+                      ),
+                      Tab(
+                        child: Text(
+                          'FAQ',
+                          style: TextStyle(fontSize: 16),
+                        ),
+                      ),
+                      Tab(
+                        child: Text(
+                          'Information',
+                          style: TextStyle(fontSize: 16),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8.0),
+                  Expanded(
+                    child: TabBarView(
+                      children: [
+                        _buildSettingsTab(envVarControllers, service),
+                        _buildFaqTab(),
+                        _buildInformationTab(),
+                      ],
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -317,7 +294,10 @@ class _ServiceManagerState extends State<ServiceManager> {
           actions: <Widget>[
             if (isAdmin)
               TextButton(
-                child: const Text('Save'),
+                child: const Text(
+                  'Save',
+                  style: TextStyle(fontSize: 16.0),
+                ),
                 onPressed: () {
                   setState(() {
                     service.envVars = {
@@ -329,7 +309,10 @@ class _ServiceManagerState extends State<ServiceManager> {
                 },
               ),
             TextButton(
-              child: const Text('Close'),
+              child: const Text(
+                'Close',
+                style: TextStyle(fontSize: 16.0),
+              ),
               onPressed: () {
                 Navigator.of(context).pop();
               },
@@ -350,6 +333,83 @@ class _ServiceManagerState extends State<ServiceManager> {
         final service = entry.value;
         return _buildServiceItem(service);
       },
+    );
+  }
+
+  Widget _buildSettingsTab(
+      Map<String, TextEditingController> envVarControllers, Service service) {
+    return SingleChildScrollView(
+      child: ListBody(
+        children: <Widget>[
+          if (isAdmin)
+            ...envVarControllers.entries.map((entry) => Row(
+                  children: [
+                    Expanded(
+                      flex: 1,
+                      child: Text('${entry.key}:',
+                          style: const TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 16.0)),
+                    ),
+                    Expanded(
+                      flex: 2,
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 8.0),
+                        child: TextFormField(
+                          controller: entry.value,
+                          decoration: const InputDecoration(
+                            border: UnderlineInputBorder(),
+                            contentPadding: EdgeInsets.symmetric(
+                                vertical: 0, horizontal: 0),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ))
+          else
+            ...service.envVars!.entries.map((entry) => Column(
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(
+                          flex: 1,
+                          child: Text('${entry.key}:',
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 16.0)),
+                        ),
+                        Expanded(
+                          flex: 2,
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 8.0),
+                            child: SelectableText(
+                              entry.value,
+                              style: const TextStyle(fontSize: 16.0),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 12.0,
+                    )
+                  ],
+                )),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInformationTab() {
+    return Center(
+      child: Text('Information about the service will go here.',
+          style: const TextStyle(fontSize: 16.0)),
+    );
+  }
+
+  Widget _buildFaqTab() {
+    return Center(
+      child: Text('Frequently asked questions will go here.',
+          style: const TextStyle(fontSize: 16.0)),
     );
   }
 
