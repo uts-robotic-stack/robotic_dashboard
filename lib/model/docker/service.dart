@@ -8,7 +8,7 @@ class Service {
   final String action;
   final String name;
   final List<String> command;
-  final String status = "starting";
+  final String status = "off";
 
   String? containerID;
   bool? tty;

@@ -120,43 +120,83 @@ class _ServiceManagerState extends State<ServiceManager> {
   }
 
   void _showServiceSettings(Service service) {
-    // Editable controllers
-    final TextEditingController imageController =
-        TextEditingController(text: service.image);
-    final TextEditingController actionController =
-        TextEditingController(text: service.action);
-    final TextEditingController networkController =
-        TextEditingController(text: service.network ?? "");
-
+    final Map<String, TextEditingController> envVarControllers = {
+      for (var entry
+          in service.envVars?.entries ?? <MapEntry<String, String>>[])
+        entry.key: TextEditingController(text: entry.value),
+    };
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('${service.name} settings'),
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: <Widget>[
-                isAdmin
-                    ? TextFormField(
-                        controller: imageController,
-                        decoration: const InputDecoration(labelText: 'Image'),
-                      )
-                    : Text('Image: ${service.image}'),
-                isAdmin
-                    ? TextFormField(
-                        controller: actionController,
-                        decoration: const InputDecoration(labelText: 'Action'),
-                      )
-                    : Text('Action: ${service.action}'),
-                isAdmin
-                    ? TextFormField(
-                        controller: networkController,
-                        decoration: const InputDecoration(labelText: 'Network'),
-                      )
-                    : Text('Network: ${service.network ?? "N/A"}'),
-                Text('TTY: ${service.tty}'),
-                Text('Privileged: ${service.privileged}'),
-              ],
+          title: Text(
+            '${service.name} settings',
+            style: const TextStyle(fontSize: 20),
+          ),
+          content: SizedBox(
+            width: 450,
+            height: 200,
+            child: SingleChildScrollView(
+              child: ListBody(
+                children: <Widget>[
+                  if (isAdmin) ...[
+                    ...envVarControllers.entries.map((entry) => Row(
+                          children: [
+                            Expanded(
+                              flex: 1,
+                              child: Text('${entry.key}:',
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16.0)),
+                            ),
+                            Expanded(
+                              flex: 2,
+                              child: Padding(
+                                padding: const EdgeInsets.only(left: 8.0),
+                                child: TextFormField(
+                                  controller: entry.value,
+                                  decoration: const InputDecoration(
+                                    border: UnderlineInputBorder(),
+                                    contentPadding: EdgeInsets.symmetric(
+                                        vertical: 0, horizontal: 0),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        )),
+                  ] else ...[
+                    ...service.envVars!.entries.map((entry) => Column(
+                          children: [
+                            Row(
+                              children: [
+                                Expanded(
+                                  flex: 1,
+                                  child: Text('${entry.key}:',
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16.0)),
+                                ),
+                                Expanded(
+                                  flex: 2,
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(left: 8.0),
+                                    child: SelectableText(
+                                      entry.value,
+                                      style: const TextStyle(fontSize: 16.0),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(
+                              height: 12.0,
+                            )
+                          ],
+                        )),
+                  ],
+                ],
+              ),
             ),
           ),
           actions: <Widget>[
@@ -165,15 +205,12 @@ class _ServiceManagerState extends State<ServiceManager> {
                 child: const Text('Save'),
                 onPressed: () {
                   setState(() {
-                    // Update service settings with edited values
-                    // service.image = imageController.text;
-                    // service.action = actionController.text;
-                    // service.network = networkController.text.isNotEmpty
-                    //     ? networkController.text
-                    //     : null;
+                    service.envVars = {
+                      for (var entry in envVarControllers.entries)
+                        entry.key: entry.value.text,
+                    };
                   });
                   Navigator.of(context).pop();
-                  // Add code to save changes to server if needed
                 },
               ),
             TextButton(
