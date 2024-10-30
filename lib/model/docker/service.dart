@@ -8,8 +8,8 @@ class Service {
   final String action;
   final String name;
   final List<String> command;
-  String status = "off";
 
+  String? status;
   String? containerID;
   bool? tty;
   bool? privileged;
@@ -38,6 +38,7 @@ class Service {
     this.volumes,
     this.resources,
     this.sysctls,
+    this.status,
   });
 
   factory Service.fromJson(Map<String, dynamic> json) {
@@ -73,6 +74,7 @@ class Service {
       sysctls: json['sysctls'] != null
           ? Map<String, String>.from(json['sysctls'])
           : null,
+      status: json['status'],
     );
   }
 
@@ -82,7 +84,6 @@ class Service {
     data['action'] = action;
     data['name'] = name;
     data['command'] = command;
-    if (containerID != null) data['container_id'] = containerID;
     if (tty != null) data['tty'] = tty;
     if (privileged != null) data['privileged'] = privileged;
     if (restart != null) data['restart'] = restart;

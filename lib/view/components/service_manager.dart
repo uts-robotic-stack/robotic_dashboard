@@ -51,6 +51,7 @@ class _ServiceManagerState extends State<ServiceManager> {
       for (var entry in servicesMap.entries) {
         services[entry.key] =
             Service.fromJson(entry.value as Map<String, dynamic>);
+        services[entry.key]?.status = "off";
       }
 
       setState(() {
@@ -105,9 +106,8 @@ class _ServiceManagerState extends State<ServiceManager> {
 
       setState(() {
         for (var entry in services.entries) {
-          if (!_services.containsKey(entry.key) &&
-              !_excludedServices.contains(entry.key)) {
-            _services[entry.key] = entry.value;
+          if (!_excludedServices.contains(entry.key)) {
+            _services[entry.key]?.status = entry.value.status;
           }
         }
       });
@@ -131,17 +131,101 @@ class _ServiceManagerState extends State<ServiceManager> {
         headers: {'Content-Type': 'application/json'},
         body: json.encode(serviceMap),
       );
+      if (response.statusCode == 200) {
+        // print('Service info successfully sent for ${service.name}');
+        setState(() {
+          // _services[service.name]?.status = "running";
+        });
+      } else {
+        // print('Failed to send service info: ${response.statusCode}');
+      }
+    } catch (error) {
+      // print('Error sending service info: $error');
+    }
+  }
+
+  // Function to send HTTP request containing the current service information
+  Future<void> _stopAndUnloadService(Service service) async {
+    const String endpointUrl =
+        'http://localhost:8080/api/v1/supervisor/stop-unload'; // Replace with your actual endpoint
+
+    final Map<String, dynamic> serviceMap = {
+      'services': {
+        service.name: "",
+      },
+    };
+
+    try {
+      final response = await http.post(
+        Uri.parse(endpointUrl),
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode(serviceMap),
+      );
 
       if (response.statusCode == 200) {
         // print('Service info successfully sent for ${service.name}');
         setState(() {
-          _services[service.name]?.status = "running";
+          _services[service.name]?.status = "off";
         });
       } else {
-        print('Failed to send service info: ${response.statusCode}');
+        // print('Failed to send service info: ${response.statusCode}');
       }
     } catch (error) {
-      print('Error sending service info: $error');
+      // print('Error sending service info: $error');
+    }
+  }
+
+  // Function to send HTTP request containing the current service information
+  Future<void> _resetService(Service service) async {
+    const String stopUnloadUrl =
+        'http://localhost:8080/api/v1/supervisor/stop-unload'; // Replace with your actual endpoint
+
+    final Map<String, dynamic> serviceMap = {
+      'services': {
+        service.name: "",
+      },
+    };
+
+    try {
+      final response = await http.post(
+        Uri.parse(stopUnloadUrl),
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode(serviceMap),
+      );
+
+      if (response.statusCode == 200) {
+        // print('Service info successfully sent for ${service.name}');
+        const String loadStartUrl =
+            'http://localhost:8080/api/v1/supervisor/load-run'; // Replace with your actual endpoint
+
+        final Map<String, dynamic> serviceMap = {
+          'services': {
+            service.name: service.toJson(),
+          },
+        };
+
+        try {
+          final response = await http.post(
+            Uri.parse(loadStartUrl),
+            headers: {'Content-Type': 'application/json'},
+            body: json.encode(serviceMap),
+          );
+          if (response.statusCode == 200) {
+            // print('Service info successfully sent for ${service.name}');
+            setState(() {
+              // _services[service.name]?.status = "running";
+            });
+          } else {
+            // print('Failed to send service info: ${response.statusCode}');
+          }
+        } catch (error) {
+          // print('Error sending service info: $error');
+        }
+      } else {
+        // print('Failed to send service info: ${response.statusCode}');
+      }
+    } catch (error) {
+      // print('Error sending service info: $error');
     }
   }
 
@@ -291,14 +375,18 @@ class _ServiceManagerState extends State<ServiceManager> {
         Padding(
           padding: EdgeInsets.symmetric(horizontal: padding),
           child: IconButton(
-            onPressed: () {},
+            onPressed: () {
+              _stopAndUnloadService(data);
+            },
             icon: Icon(Icons.stop, size: size),
           ),
         ),
         Padding(
           padding: EdgeInsets.symmetric(horizontal: padding),
           child: IconButton(
-            onPressed: () {},
+            onPressed: () {
+              if (data.status != "off") _resetService(data);
+            },
             icon: Icon(Icons.settings_backup_restore, size: size),
           ),
         ),
@@ -350,14 +438,15 @@ class _ServiceManagerState extends State<ServiceManager> {
         );
     }
 
+    String status = data.status ?? 'off';
     return Container(
-      width: 100,
+      width: 110,
       height: 25,
       decoration: decoration,
       padding: const EdgeInsets.symmetric(horizontal: defaultPadding),
       child: Center(
         child: Text(
-          data.status,
+          status,
           style: const TextStyle(color: Colors.white, fontSize: 14.0),
         ),
       ),
