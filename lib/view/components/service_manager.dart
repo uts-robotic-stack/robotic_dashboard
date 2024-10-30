@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:robotics_dashboard/responsive/responsive.dart';
 import 'dart:convert';
 import 'dart:async';
 import 'package:robotics_dashboard/utils/constants.dart';
@@ -200,11 +201,104 @@ class _ServiceManagerState extends State<ServiceManager> {
     );
   }
 
+  Widget _buildCommandKeys(Service data) {
+    double padding = 4.0;
+    double size = 22.0;
+
+    if (Responsive.isDesktop(context)) {
+      padding = 0.0;
+      size = 20.0;
+    }
+    return Row(
+      children: [
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: padding),
+          child: IconButton(
+            onPressed: () {},
+            icon: Icon(Icons.play_arrow, size: size),
+          ),
+        ),
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: padding),
+          child: IconButton(
+            onPressed: () {},
+            icon: Icon(Icons.stop, size: size),
+          ),
+        ),
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: padding),
+          child: IconButton(
+            onPressed: () {},
+            icon: Icon(Icons.settings_backup_restore, size: size),
+          ),
+        ),
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: padding),
+          child: IconButton(
+            onPressed: () {},
+            icon: Icon(Icons.my_library_books_outlined, size: size),
+          ),
+        ),
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: padding),
+          child: IconButton(
+            onPressed: () {
+              _showServiceSettings(data);
+            },
+            icon: Icon(Icons.settings, size: size),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildStatusBar(Service data) {
+    BoxDecoration decoration = const BoxDecoration(
+      color: Color.fromARGB(255, 255, 75, 75),
+      borderRadius: BorderRadius.all(Radius.circular(6)),
+    );
+    switch (data.status) {
+      case "off":
+        decoration = const BoxDecoration(
+          color: Color.fromARGB(255, 255, 75, 75),
+          borderRadius: BorderRadius.all(Radius.circular(6)),
+        );
+      case "running":
+        decoration = const BoxDecoration(
+          color: Color.fromARGB(255, 34, 157, 67),
+          borderRadius: BorderRadius.all(Radius.circular(6)),
+        );
+      case "updating":
+        decoration = const BoxDecoration(
+          color: Color.fromARGB(255, 0, 91, 166),
+          borderRadius: BorderRadius.all(Radius.circular(6)),
+        );
+      case "starting":
+        decoration = const BoxDecoration(
+          color: Color.fromARGB(255, 191, 176, 42),
+          borderRadius: BorderRadius.all(Radius.circular(6)),
+        );
+    }
+
+    return Container(
+      width: 100,
+      height: 25,
+      decoration: decoration,
+      padding: const EdgeInsets.symmetric(horizontal: defaultPadding),
+      child: Center(
+        child: Text(
+          data.status,
+          style: const TextStyle(color: Colors.white, fontSize: 14.0),
+        ),
+      ),
+    );
+  }
+
   Widget _buildServiceItem(Service data) {
     return Column(
       children: [
         Container(
-          height: 150,
+          height: 75,
           padding: const EdgeInsets.all(defaultPadding),
           decoration: BoxDecoration(
             color: secondaryColor,
@@ -215,47 +309,22 @@ class _ServiceManagerState extends State<ServiceManager> {
             children: [
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                // crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.all(5),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          data.name,
-                          style: const TextStyle(
-                              color: Colors.black, fontSize: 14.0),
-                        ),
-                      ],
+                  SizedBox(
+                    width: 200,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 5, horizontal: defaultPadding),
+                      child: Text(
+                        data.name,
+                        style: const TextStyle(
+                            color: Colors.black, fontSize: 14.0),
+                      ),
                     ),
                   ),
-                  Row(
-                    children: [
-                      IconButton(
-                        onPressed: () {},
-                        icon: const Icon(Icons.play_arrow, size: 20.0),
-                      ),
-                      IconButton(
-                        onPressed: () {},
-                        icon: const Icon(Icons.pause, size: 20.0),
-                      ),
-                      IconButton(
-                        onPressed: () {},
-                        icon: const Icon(Icons.stop, size: 20.0),
-                      ),
-                      IconButton(
-                        onPressed: () {},
-                        icon: const Icon(Icons.my_library_books_outlined,
-                            size: 20.0),
-                      ),
-                      IconButton(
-                        onPressed: () {
-                          _showServiceSettings(data);
-                        },
-                        icon: const Icon(Icons.settings, size: 20.0),
-                      ),
-                    ],
-                  ),
+                  _buildStatusBar(data),
+                  _buildCommandKeys(data),
                 ],
               ),
             ],

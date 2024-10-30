@@ -22,31 +22,35 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        drawer: const SideMenu(),
-        body: SafeArea(
-            child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            if (Responsive.isDesktop(context))
-              const SizedBox(width: defaultSideMenuWidth, child: SideMenu()),
-            const Expanded(
-              flex: 1,
-              child: Column(
-                children: [
-                  DashboardHeader(),
-                  DeviceInfo(),
-                  ControllerDashboard(),
-                  SizedBox(
-                    height: defaultPadding,
-                  ),
-                ],
+    double screenWidth = MediaQuery.of(context).size.width;
+    return FractionallySizedBox(
+      widthFactor: screenWidth < 1480 ? 1.0 : 1480 / screenWidth,
+      child: Scaffold(
+          drawer: const SideMenu(),
+          body: SafeArea(
+              child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if (Responsive.isDesktop(context))
+                const SizedBox(width: defaultSideMenuWidth, child: SideMenu()),
+              const Expanded(
+                flex: 1,
+                child: Column(
+                  children: [
+                    DashboardHeader(),
+                    DeviceInfo(),
+                    ControllerDashboard(),
+                    SizedBox(
+                      height: defaultPadding,
+                    ),
+                  ],
+                ),
               ),
-            ),
-            if (Responsive.isDesktop(context))
-              Expanded(flex: 1, child: LogsViewer())
-          ],
-        )));
+              if (Responsive.isDesktop(context))
+                Expanded(flex: 1, child: LogsViewer())
+            ],
+          ))),
+    );
   }
 }
 
