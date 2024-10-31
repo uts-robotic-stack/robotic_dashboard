@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:robotics_dashboard/view/widgets/pdf_downloader.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import 'package:http/http.dart' as http;
 import 'package:robotics_dashboard/responsive/responsive.dart';
@@ -254,7 +255,7 @@ class _ServiceManagerState extends State<ServiceManager> {
             style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
           content: SizedBox(
-            width: 700,
+            width: 900,
             height: 500,
             child: DefaultTabController(
               length: 3,
@@ -405,7 +406,7 @@ class _ServiceManagerState extends State<ServiceManager> {
   }
 
   Widget _buildInformationTab() {
-    return SfPdfViewer.asset('pdfs/test.pdf');
+    return PDFDownloadListWidget();
   }
 
   Widget _buildExampleTab() {
