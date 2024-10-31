@@ -8,7 +8,6 @@ import 'package:robotics_dashboard/view/widgets/adaptive_switch.dart';
 class LogsViewer extends StatelessWidget {
   LogsViewer({super.key});
 
-  bool _follow = false;
   final ScrollController _controller = ScrollController();
 
   @override

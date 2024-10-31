@@ -8,6 +8,7 @@ class PDFDownloadListWidget extends StatefulWidget {
   const PDFDownloadListWidget({Key? key}) : super(key: key);
 
   @override
+  // ignore: library_private_types_in_public_api
   _PDFDownloadListWidgetState createState() => _PDFDownloadListWidgetState();
 }
 
@@ -32,7 +33,7 @@ class _PDFDownloadListWidgetState extends State<PDFDownloadListWidget> {
         );
       });
     } catch (e) {
-      print("Failed to load PDF list: $e");
+      // print("Failed to load PDF list: $e");
     }
   }
 
@@ -91,8 +92,7 @@ class _PDFDownloadListWidgetState extends State<PDFDownloadListWidget> {
       child: Column(
         children: [
           const Padding(
-            padding:
-                EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
+            padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
             child: Row(
               children: [
                 SizedBox(width: 56.0), // Space for the icon column
