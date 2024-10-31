@@ -1,0 +1,12 @@
+instructions:
+  - name: "Dobot-ROS2 usage instruction"
+    version: "1.0.0"
+    size: "2 MB"
+    description: "This is a description for Sample PDF 1."
+    path: "pdfs/test.pdf"
+
+  - name: "General dashboard instruction"
+    version: "1.0.0"
+    size: "2 MB"
+    description: "This is a description for Sample PDF 1."
+    path: "pdfs/test.pdf"

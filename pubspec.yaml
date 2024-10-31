@@ -46,6 +46,8 @@ dependencies:
   syncfusion_flutter_pdfviewer: ^27.1.57
   path_provider:
   yaml: ^3.1.2
+  web_socket_channel: ^3.0.1
+  provider: ^6.1.2
 
 dev_dependencies:
   flutter_test:
@@ -73,6 +75,9 @@ flutter:
   assets:
     - assets/images/
     - assets/icons/
+    - assets/fonts/
+    - assets/js/
+    - assets/pdfs/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

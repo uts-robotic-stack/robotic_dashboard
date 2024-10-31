@@ -1,8 +1,7 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:robotics_dashboard/service/service_log_ws_client.dart';
 import 'package:robotics_dashboard/view/widgets/pdf_downloader.dart';
-import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import 'package:http/http.dart' as http;
 import 'package:robotics_dashboard/responsive/responsive.dart';
 import 'dart:convert';
@@ -10,12 +9,13 @@ import 'dart:async';
 import 'package:robotics_dashboard/utils/constants.dart';
 import 'package:robotics_dashboard/model/docker/service.dart';
 import 'package:flutter_highlight/flutter_highlight.dart';
-import 'package:flutter_highlight/themes/atom-one-light.dart'; // You can use other themes
+import 'package:flutter_highlight/themes/atom-one-light.dart';
 
 class ServiceManager extends StatefulWidget {
   const ServiceManager({Key? key}) : super(key: key);
 
   @override
+  // ignore: library_private_types_in_public_api
   _ServiceManagerState createState() => _ServiceManagerState();
 }
 
@@ -26,6 +26,9 @@ class _ServiceManagerState extends State<ServiceManager> {
 
   Timer? _timer;
   final Duration _refreshDuration = const Duration(seconds: 5);
+
+  String _logOfService = "robotics_supervisor";
+  String get logOfService => _logOfService;
 
   @override
   void initState() {
@@ -64,9 +67,7 @@ class _ServiceManagerState extends State<ServiceManager> {
         _services.clear();
         _services.addAll(services);
       });
-    } else {
-      // print('Failed to load services with status code: ${response.statusCode}');
-    }
+    } else {}
   }
 
   Future<void> _fetchExcludedServices() async {
@@ -251,7 +252,7 @@ class _ServiceManagerState extends State<ServiceManager> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text(
-            '${service.name}',
+            service.name,
             style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
           content: SizedBox(
@@ -265,12 +266,6 @@ class _ServiceManagerState extends State<ServiceManager> {
                     tabs: [
                       Tab(
                         child: Text(
-                          'Settings',
-                          style: TextStyle(fontSize: 16),
-                        ),
-                      ),
-                      Tab(
-                        child: Text(
                           'FAQ',
                           style: TextStyle(fontSize: 16),
                         ),
@@ -281,15 +276,21 @@ class _ServiceManagerState extends State<ServiceManager> {
                           style: TextStyle(fontSize: 16),
                         ),
                       ),
+                      Tab(
+                        child: Text(
+                          'Settings',
+                          style: TextStyle(fontSize: 16),
+                        ),
+                      ),
                     ],
                   ),
                   const SizedBox(height: 8.0),
                   Expanded(
                     child: TabBarView(
                       children: [
-                        _buildSettingsTab(envVarControllers, service),
-                        _buildExampleTab(),
+                        _buildFAQTab(),
                         _buildInformationTab(),
+                        _buildSettingsTab(envVarControllers, service),
                       ],
                     ),
                   ),
@@ -337,7 +338,7 @@ class _ServiceManagerState extends State<ServiceManager> {
         // Convert map entries to a list for indexed access
         final entry = _services.entries.elementAt(index);
         final service = entry.value;
-        return _buildServiceItem(service);
+        return _buildServiceItem(context, service);
       },
     );
   }
@@ -406,10 +407,10 @@ class _ServiceManagerState extends State<ServiceManager> {
   }
 
   Widget _buildInformationTab() {
-    return PDFDownloadListWidget();
+    return const PDFDownloadListWidget();
   }
 
-  Widget _buildExampleTab() {
+  Widget _buildFAQTab() {
     return Center(
       child: HighlightView(
         '''
@@ -420,13 +421,13 @@ greet("World")
             ''',
         language: 'python',
         theme: atomOneLightTheme,
-        padding: EdgeInsets.all(12),
-        textStyle: TextStyle(fontFamily: 'Courier', fontSize: 16),
+        padding: const EdgeInsets.all(12),
+        textStyle: const TextStyle(fontFamily: 'Courier', fontSize: 16),
       ),
     );
   }
 
-  Widget _buildCommandKeys(Service data) {
+  Widget _buildCommandKeys(BuildContext context, Service data) {
     double padding = 4.0;
     double size = 22.0;
 
@@ -434,6 +435,8 @@ greet("World")
       padding = 0.0;
       size = 20.0;
     }
+
+    final logsProvider = Provider.of<ServiceLogsWSClient>(context);
     return Row(
       children: [
         Padding(
@@ -466,7 +469,16 @@ greet("World")
         Padding(
           padding: EdgeInsets.symmetric(horizontal: padding),
           child: IconButton(
-            onPressed: () {},
+            onPressed: () {
+              _logOfService = data.name;
+
+              // Start WS
+              if (data.status != "off") {
+                logsProvider.disconnectWebSocket();
+                logsProvider.logs.clear();
+                logsProvider.updateServiceName(data.name);
+              }
+            },
             icon: Icon(Icons.my_library_books_outlined, size: size),
           ),
         ),
@@ -540,7 +552,7 @@ greet("World")
     );
   }
 
-  Widget _buildServiceItem(Service data) {
+  Widget _buildServiceItem(BuildContext context, Service data) {
     return Column(
       children: [
         Container(
@@ -558,7 +570,7 @@ greet("World")
                 children: [
                   _buildServiceName(data),
                   _buildStatusBar(data),
-                  _buildCommandKeys(data),
+                  _buildCommandKeys(context, data),
                 ],
               ),
             ],
