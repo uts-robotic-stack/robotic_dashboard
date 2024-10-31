@@ -1,10 +1,15 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 import 'package:http/http.dart' as http;
 import 'package:robotics_dashboard/responsive/responsive.dart';
 import 'dart:convert';
 import 'dart:async';
 import 'package:robotics_dashboard/utils/constants.dart';
 import 'package:robotics_dashboard/model/docker/service.dart';
+import 'package:flutter_highlight/flutter_highlight.dart';
+import 'package:flutter_highlight/themes/atom-one-light.dart'; // You can use other themes
 
 class ServiceManager extends StatefulWidget {
   const ServiceManager({Key? key}) : super(key: key);
@@ -249,8 +254,8 @@ class _ServiceManagerState extends State<ServiceManager> {
             style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
           content: SizedBox(
-            width: 450,
-            height: 300,
+            width: 700,
+            height: 500,
             child: DefaultTabController(
               length: 3,
               child: Column(
@@ -282,7 +287,7 @@ class _ServiceManagerState extends State<ServiceManager> {
                     child: TabBarView(
                       children: [
                         _buildSettingsTab(envVarControllers, service),
-                        _buildFaqTab(),
+                        _buildExampleTab(),
                         _buildInformationTab(),
                       ],
                     ),
@@ -400,16 +405,23 @@ class _ServiceManagerState extends State<ServiceManager> {
   }
 
   Widget _buildInformationTab() {
-    return Center(
-      child: Text('Information about the service will go here.',
-          style: const TextStyle(fontSize: 16.0)),
-    );
+    return SfPdfViewer.asset('pdfs/test.pdf');
   }
 
-  Widget _buildFaqTab() {
+  Widget _buildExampleTab() {
     return Center(
-      child: Text('Frequently asked questions will go here.',
-          style: const TextStyle(fontSize: 16.0)),
+      child: HighlightView(
+        '''
+def greet(name):
+    print(f"Hello, {name}!")
+
+greet("World")
+            ''',
+        language: 'python',
+        theme: atomOneLightTheme,
+        padding: EdgeInsets.all(12),
+        textStyle: TextStyle(fontFamily: 'Courier', fontSize: 16),
+      ),
     );
   }
 
