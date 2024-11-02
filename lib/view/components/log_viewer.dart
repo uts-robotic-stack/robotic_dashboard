@@ -9,6 +9,7 @@ class LogsViewer extends StatelessWidget {
   LogsViewer({super.key});
 
   final ScrollController _controller = ScrollController();
+  bool _follow = false;
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +35,11 @@ class LogsViewer extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: defaultPadding),
                 child: Row(
                   children: [
-                    const AdaptiveSwitch(),
+                    AdaptiveSwitch(
+                      onChanged: (value) {
+                        _follow = value;
+                      },
+                    ),
                     const SizedBox(
                       width: 10,
                     ),
@@ -82,6 +87,10 @@ class LogsViewer extends StatelessWidget {
                 controller: _controller,
                 itemCount: logsProvider.logs.length,
                 itemBuilder: (context, index) {
+                  if (_follow) {
+                    var scrollPosition = _controller.position;
+                    _controller.jumpTo(scrollPosition.maxScrollExtent);
+                  }
                   return ListTile(
                     minVerticalPadding: 2.0,
                     dense: true,

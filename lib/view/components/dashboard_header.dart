@@ -14,6 +14,7 @@ class DashboardHeader extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(defaultPadding * 1.5),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           if (!Responsive.isDesktop(context))
             Padding(
@@ -29,7 +30,7 @@ class DashboardHeader extends StatelessWidget {
               "ROBOTICS DASHBOARD",
               style: Theme.of(context).textTheme.headlineSmall,
             ),
-          )
+          ),
         ],
       ),
     );

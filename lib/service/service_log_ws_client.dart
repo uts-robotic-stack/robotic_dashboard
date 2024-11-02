@@ -6,7 +6,7 @@ import 'package:web_socket_channel/status.dart' as status;
 class ServiceLogsWSClient with ChangeNotifier {
   String _serviceName = "robotics_supervisor";
   WebSocketChannel? _channel;
-  List<String> _logs = [];
+  final List<String> _logs = [];
 
   String get serviceName => _serviceName;
   List<String> get logs => _logs;

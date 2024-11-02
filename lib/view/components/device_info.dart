@@ -152,9 +152,11 @@ class _DeviceInfoListState extends State<DeviceInfoList> {
                       SelectableText(
                         item["mainText"] as String,
                         style: const TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                        ),
+                            fontFamily: 'Poppins',
+                            fontSize: 14,
+                            fontStyle: FontStyle.normal,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.black),
                       ),
                     ],
                   ),

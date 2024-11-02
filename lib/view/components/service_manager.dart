@@ -115,6 +115,9 @@ class _ServiceManagerState extends State<ServiceManager> {
         for (var entry in services.entries) {
           if (!_excludedServices.contains(entry.key)) {
             _services[entry.key]?.status = entry.value.status;
+            if (!_services.containsKey(entry.key)) {
+              _services[entry.key] = entry.value;
+            }
           }
         }
       });
@@ -139,7 +142,6 @@ class _ServiceManagerState extends State<ServiceManager> {
         body: json.encode(serviceMap),
       );
       if (response.statusCode == 200) {
-        // print('Service info successfully sent for ${service.name}');
         setState(() {
           // _services[service.name]?.status = "running";
         });
@@ -239,6 +241,12 @@ class _ServiceManagerState extends State<ServiceManager> {
   void _startPeriodicFetch() {
     _timer =
         Timer.periodic(_refreshDuration, (Timer t) => _fetchCurrentServices());
+  }
+
+  void _showSupervisorSettings(Service service) {
+    if (!isAdmin) {
+      return;
+    }
   }
 
   void _showServiceSettings(Service service) {
@@ -443,6 +451,9 @@ greet("World")
           padding: EdgeInsets.symmetric(horizontal: padding),
           child: IconButton(
             onPressed: () {
+              if (data.name == "robotics_supervisor") {
+                return;
+              }
               _loadAndRunService(data);
             },
             icon: Icon(Icons.play_arrow, size: size),
@@ -452,6 +463,9 @@ greet("World")
           padding: EdgeInsets.symmetric(horizontal: padding),
           child: IconButton(
             onPressed: () {
+              if (data.name == "robotics_supervisor") {
+                return;
+              }
               _stopAndUnloadService(data);
             },
             icon: Icon(Icons.stop, size: size),
@@ -461,6 +475,9 @@ greet("World")
           padding: EdgeInsets.symmetric(horizontal: padding),
           child: IconButton(
             onPressed: () {
+              if (data.name == "robotics_supervisor") {
+                return;
+              }
               if (data.status != "off") _resetService(data);
             },
             icon: Icon(Icons.settings_backup_restore, size: size),
@@ -486,6 +503,11 @@ greet("World")
           padding: EdgeInsets.symmetric(horizontal: padding),
           child: IconButton(
             onPressed: () {
+              if (data.name == "robotics_supervisor") {
+                // Show settings specifically to the supervisor (on admin has access)
+                _showSupervisorSettings(data);
+                return;
+              }
               _showServiceSettings(data);
             },
             icon: Icon(Icons.settings, size: size),

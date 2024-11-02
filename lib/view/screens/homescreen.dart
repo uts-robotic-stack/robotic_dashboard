@@ -124,7 +124,7 @@ class ControllerDashboard extends StatelessWidget {
               color: secondaryColor,
               borderRadius: const BorderRadius.all(Radius.circular(10)),
               border:
-                  Border.all(color: const Color.fromARGB(255, 107, 107, 107))),
+                  Border.all(color: const Color.fromARGB(255, 193, 193, 193))),
           child: const Column(
             children: [
               Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
