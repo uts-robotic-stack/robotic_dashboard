@@ -42,39 +42,48 @@ class Service {
   });
 
   factory Service.fromJson(Map<String, dynamic> json) {
+    // Helper function to safely fetch and parse lists of maps
+    List<T>? parseList<T>(
+        dynamic data, T Function(Map<String, dynamic>) fromJson) {
+      if (data is List) {
+        return data
+            .map((item) => fromJson(item as Map<String, dynamic>))
+            .toList();
+      }
+      return null;
+    }
+
     return Service(
-      image: json['image'],
-      action: json['action'],
-      name: json['name'],
-      command: List<String>.from(json['command']),
-      containerID: json['container_id'],
-      tty: json['tty'],
-      privileged: json['privileged'],
-      restart: json['restart'],
-      network: json['network'],
+      image: json['image'] as String? ?? '', // Default empty string if null
+      action: json['action'] as String? ?? '', // Default empty string if null
+      name: json['name'] as String? ?? '', // Default empty string if null
+      command: (json['command'] as List<dynamic>?)
+              ?.map((item) => item as String)
+              .toList() ??
+          [], // Default empty list if null
+      containerID: json['container_id'] as String?,
+      tty: json['tty'] as bool?,
+      privileged: json['privileged'] as bool?,
+      restart: json['restart'] as String?,
+      network: json['network'] as String?,
       networkSettings: json['network_settings'] != null
-          ? NetworkConfig.fromJson(json['network_settings'])
+          ? NetworkConfig.fromJson(
+              json['network_settings'] as Map<String, dynamic>)
           : null,
-      mounts: json['mounts'] != null
-          ? (json['mounts'] as List)
-              .map((i) => MountConfig.fromJson(i))
-              .toList()
-          : null,
+      mounts: parseList<MountConfig>(
+          json['mounts'], (item) => MountConfig.fromJson(item)),
       envVars: json['env_vars'] != null
-          ? Map<String, String>.from(json['env_vars'])
+          ? Map<String, String>.from(json['env_vars'] as Map)
           : null,
-      volumes: json['volumes'] != null
-          ? (json['volumes'] as List)
-              .map((i) => VolumeConfig.fromJson(i))
-              .toList()
-          : null,
+      volumes: parseList<VolumeConfig>(
+          json['volumes'], (item) => VolumeConfig.fromJson(item)),
       resources: json['resources'] != null
-          ? ResourceConfig.fromJson(json['resources'])
+          ? ResourceConfig.fromJson(json['resources'] as Map<String, dynamic>)
           : null,
       sysctls: json['sysctls'] != null
-          ? Map<String, String>.from(json['sysctls'])
+          ? Map<String, String>.from(json['sysctls'] as Map)
           : null,
-      status: json['status'],
+      status: json['status'] as String?,
     );
   }
 

@@ -27,7 +27,7 @@ class _ServiceManagerState extends State<ServiceManager> {
   Timer? _timer;
   final Duration _refreshDuration = const Duration(seconds: 5);
 
-  String _logOfService = "robotics_supervisor";
+  String _logOfService = "robotic_supervisor";
   String get logOfService => _logOfService;
 
   @override
@@ -66,6 +66,7 @@ class _ServiceManagerState extends State<ServiceManager> {
       setState(() {
         _services.clear();
         _services.addAll(services);
+        print(_services);
       });
     } else {}
   }
@@ -98,6 +99,7 @@ class _ServiceManagerState extends State<ServiceManager> {
       Uri.parse('http://localhost:8080/api/v1/supervisor/all'),
       headers: {
         'Authorization': 'Bearer robotics',
+        "Content-Type": "application/json"
       },
     );
 
@@ -105,6 +107,8 @@ class _ServiceManagerState extends State<ServiceManager> {
       final Map<String, dynamic> jsonResponse = jsonDecode(response.body);
       final Map<String, dynamic> servicesMap = jsonResponse['services'];
       final Map<String, Service> services = {};
+
+      // print(servicesMap);
 
       for (var entry in servicesMap.entries) {
         services[entry.key] =
@@ -138,7 +142,10 @@ class _ServiceManagerState extends State<ServiceManager> {
     try {
       final response = await http.post(
         Uri.parse(endpointUrl),
-        headers: {'Content-Type': 'application/json'},
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer robotics',
+        },
         body: json.encode(serviceMap),
       );
       if (response.statusCode == 200) {
@@ -167,7 +174,10 @@ class _ServiceManagerState extends State<ServiceManager> {
     try {
       final response = await http.post(
         Uri.parse(endpointUrl),
-        headers: {'Content-Type': 'application/json'},
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer robotics',
+        },
         body: json.encode(serviceMap),
       );
 
@@ -198,7 +208,10 @@ class _ServiceManagerState extends State<ServiceManager> {
     try {
       final response = await http.post(
         Uri.parse(stopUnloadUrl),
-        headers: {'Content-Type': 'application/json'},
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer robotics',
+        },
         body: json.encode(serviceMap),
       );
 
@@ -216,7 +229,10 @@ class _ServiceManagerState extends State<ServiceManager> {
         try {
           final response = await http.post(
             Uri.parse(loadStartUrl),
-            headers: {'Content-Type': 'application/json'},
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer robotics',
+            },
             body: json.encode(serviceMap),
           );
           if (response.statusCode == 200) {
@@ -349,6 +365,7 @@ class _ServiceManagerState extends State<ServiceManager> {
         return _buildServiceItem(context, service);
       },
     );
+    // return Container();
   }
 
   Widget _buildSettingsTab(
@@ -451,7 +468,7 @@ greet("World")
           padding: EdgeInsets.symmetric(horizontal: padding),
           child: IconButton(
             onPressed: () {
-              if (data.name == "robotics_supervisor") {
+              if (data.name == "robotic_supervisor") {
                 return;
               }
               _loadAndRunService(data);
@@ -463,7 +480,7 @@ greet("World")
           padding: EdgeInsets.symmetric(horizontal: padding),
           child: IconButton(
             onPressed: () {
-              if (data.name == "robotics_supervisor") {
+              if (data.name == "robotic_supervisor") {
                 return;
               }
               _stopAndUnloadService(data);
@@ -475,7 +492,7 @@ greet("World")
           padding: EdgeInsets.symmetric(horizontal: padding),
           child: IconButton(
             onPressed: () {
-              if (data.name == "robotics_supervisor") {
+              if (data.name == "robotic_supervisor") {
                 return;
               }
               if (data.status != "off") _resetService(data);
@@ -503,7 +520,7 @@ greet("World")
           padding: EdgeInsets.symmetric(horizontal: padding),
           child: IconButton(
             onPressed: () {
-              if (data.name == "robotics_supervisor") {
+              if (data.name == "robotic_supervisor") {
                 // Show settings specifically to the supervisor (on admin has access)
                 _showSupervisorSettings(data);
                 return;

@@ -87,8 +87,22 @@ class DeviceInfo extends StatelessWidget {
                     header: const DropdownHeader(),
                     dropDownItems: [
                       DropdownItem(
-                        text: 'Custom Action',
-                        icon: Icons.star,
+                        text: 'Update',
+                        icon: Icons.update,
+                        onSelected: () {
+                          // Implement Shutdown functionality
+                        },
+                      ),
+                      DropdownItem(
+                        text: 'Shut down',
+                        icon: Icons.logout,
+                        onSelected: () {
+                          // Implement Shutdown functionality
+                        },
+                      ),
+                      DropdownItem(
+                        text: 'Reboot',
+                        icon: Icons.restart_alt,
                         onSelected: () {
                           // Implement Shutdown functionality
                         },
