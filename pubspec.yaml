@@ -76,8 +76,10 @@ flutter:
     - assets/images/
     - assets/icons/
     - assets/fonts/
-    - assets/js/
-    - assets/pdfs/
+    - assets/js/pdf.mjs
+    - assets/js/pdf.worker.mjs
+    - assets/pdfs/test.pdf
+    - assets/pdfs/pdf_lists.yaml
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

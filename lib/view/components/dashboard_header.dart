@@ -12,7 +12,10 @@ class DashboardHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(defaultPadding * 1.5),
+      padding: const EdgeInsets.only(
+          left: defaultPadding,
+          top: 1.5 * defaultPadding,
+          bottom: 0.5 * defaultPadding),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -27,7 +30,7 @@ class DashboardHeader extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: defaultPadding),
             child: Text(
-              "ROBOTICS DASHBOARD",
+              "ROBOTIC DASHBOARD",
               style: Theme.of(context).textTheme.headlineSmall,
             ),
           ),

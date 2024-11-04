@@ -66,7 +66,6 @@ class _ServiceManagerState extends State<ServiceManager> {
       setState(() {
         _services.clear();
         _services.addAll(services);
-        print(_services);
       });
     } else {}
   }
@@ -365,7 +364,6 @@ class _ServiceManagerState extends State<ServiceManager> {
         return _buildServiceItem(context, service);
       },
     );
-    // return Container();
   }
 
   Widget _buildSettingsTab(

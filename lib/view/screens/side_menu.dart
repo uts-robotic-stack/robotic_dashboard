@@ -111,13 +111,12 @@ class _SideMenuState extends State<SideMenu> {
       color: Colors.grey[800],
       child: Column(
         children: [
-          const Padding(
-            padding: EdgeInsets.all(24.0),
-            child: CircleAvatar(
-              radius: 20,
-              backgroundColor: Colors.white,
-            ),
-          ),
+          Padding(
+              padding: const EdgeInsets.all(2.0),
+              child: IconButton(
+                  onPressed: () {},
+                  icon: const Icon(Icons.dashboard_rounded,
+                      size: 40.0, color: Colors.white))),
           Expanded(
             child: ListView(
               children: [
@@ -140,7 +139,7 @@ class _SideMenuState extends State<SideMenu> {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: IconButton(
-                    icon: const Icon(Icons.info, color: Colors.white),
+                    icon: const Icon(Icons.leaderboard, color: Colors.white),
                     onPressed: () {},
                   ),
                 ),
@@ -148,6 +147,13 @@ class _SideMenuState extends State<SideMenu> {
                   padding: const EdgeInsets.all(8.0),
                   child: IconButton(
                     icon: const Icon(Icons.settings, color: Colors.white),
+                    onPressed: () {},
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: IconButton(
+                    icon: const Icon(Icons.info, color: Colors.white),
                     onPressed: () {},
                   ),
                 ),

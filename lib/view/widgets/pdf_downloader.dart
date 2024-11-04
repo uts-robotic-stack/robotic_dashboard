@@ -25,7 +25,7 @@ class _PDFDownloadListWidgetState extends State<PDFDownloadListWidget> {
   Future<void> loadPdfFiles() async {
     try {
       final String yamlString =
-          await rootBundle.loadString('pdfs/pdf_lists.yaml');
+          await rootBundle.loadString('assets/pdfs/pdf_lists.yaml');
       final YamlMap yamlMap = loadYaml(yamlString);
       final YamlList instructions = yamlMap['instructions'];
       setState(() {
