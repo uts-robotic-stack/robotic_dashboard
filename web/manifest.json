@@ -1,6 +1,6 @@
 {
-    "name": "robotics_dashboard",
-    "short_name": "robotics_dashboard",
+    "name": "robotic_dashboard",
+    "short_name": "robotic_dashboard",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

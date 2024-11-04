@@ -1,8 +1,8 @@
 import 'package:provider/provider.dart';
-import 'package:robotics_dashboard/service/service_log_ws_client.dart';
-import 'package:robotics_dashboard/utils/constants.dart';
+import 'package:robotic_dashboard/service/service_log_ws_client.dart';
+import 'package:robotic_dashboard/utils/constants.dart';
 import 'package:flutter/material.dart';
-import 'package:robotics_dashboard/view/widgets/adaptive_switch.dart';
+import 'package:robotic_dashboard/view/widgets/adaptive_switch.dart';
 
 // ignore: must_be_immutable
 class LogsViewer extends StatelessWidget {

@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:robotics_dashboard/service/service_log_ws_client.dart';
-import 'package:robotics_dashboard/view/widgets/pdf_downloader.dart';
+import 'package:robotic_dashboard/service/service_log_ws_client.dart';
+import 'package:robotic_dashboard/view/widgets/pdf_downloader.dart';
 import 'package:http/http.dart' as http;
-import 'package:robotics_dashboard/responsive/responsive.dart';
+import 'package:robotic_dashboard/responsive/responsive.dart';
 import 'dart:convert';
 import 'dart:async';
-import 'package:robotics_dashboard/utils/constants.dart';
-import 'package:robotics_dashboard/model/docker/service.dart';
+import 'package:robotic_dashboard/utils/constants.dart';
+import 'package:robotic_dashboard/model/docker/service.dart';
 import 'package:flutter_highlight/flutter_highlight.dart';
 import 'package:flutter_highlight/themes/atom-one-light.dart';
 

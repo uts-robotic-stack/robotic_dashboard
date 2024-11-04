@@ -1,4 +1,4 @@
-package com.example.robotics_dashboard
+package com.example.robotic_dashboard
 
 import io.flutter.embedding.android.FlutterActivity
 

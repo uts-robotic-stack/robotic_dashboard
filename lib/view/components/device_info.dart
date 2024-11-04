@@ -3,8 +3,8 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:async';
 
-import 'package:robotics_dashboard/model/device_info.dart';
-import 'package:robotics_dashboard/utils/common_utils.dart';
+import 'package:robotic_dashboard/model/device_info.dart';
+import 'package:robotic_dashboard/utils/common_utils.dart';
 
 class DeviceInfoList extends StatefulWidget {
   const DeviceInfoList({Key? key}) : super(key: key);

@@ -1,56 +1,45 @@
 import 'package:flutter/material.dart';
-import 'package:robotics_dashboard/responsive/responsive.dart';
-import 'package:robotics_dashboard/utils/constants.dart';
-import 'package:robotics_dashboard/view/components/dashboard_header.dart';
-import 'package:robotics_dashboard/view/components/device_info.dart';
-import 'package:robotics_dashboard/view/components/log_viewer.dart';
-import 'package:robotics_dashboard/view/components/service_manager.dart';
-import 'package:robotics_dashboard/view/screens/side_menu.dart';
-import 'package:robotics_dashboard/view/widgets/dropdown_button.dart';
+import 'package:robotic_dashboard/responsive/responsive.dart';
+import 'package:robotic_dashboard/utils/constants.dart';
+import 'package:robotic_dashboard/view/components/device_info.dart';
+import 'package:robotic_dashboard/view/components/header.dart';
+import 'package:robotic_dashboard/view/components/log_viewer.dart';
+import 'package:robotic_dashboard/view/components/service_manager.dart';
+import 'package:robotic_dashboard/view/screens/side_menu.dart';
+import 'package:robotic_dashboard/view/widgets/dropdown_button.dart';
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
-
-  @override
-  // ignore: library_private_types_in_public_api
-  _HomeScreenState createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends State<HomeScreen> {
-  // ignore: unused_field
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+class Dashboard extends StatelessWidget {
+  const Dashboard({
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    return FractionallySizedBox(
-      widthFactor: screenWidth < 1480 ? 1.0 : 1480 / screenWidth,
-      child: Scaffold(
-          drawer: const SideMenu(),
-          body: SafeArea(
-              child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
+    return SafeArea(
+        child: Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (Responsive.isDesktop(context))
+          const SizedBox(width: defaultSideMenuWidth, child: SideMenu()),
+        const Expanded(
+          flex: 1,
+          child: Column(
             children: [
-              if (Responsive.isDesktop(context))
-                const SizedBox(width: defaultSideMenuWidth, child: SideMenu()),
-              const Expanded(
-                flex: 1,
-                child: Column(
-                  children: [
-                    DashboardHeader(),
-                    DeviceInfo(),
-                    ControllerDashboard(),
-                    SizedBox(
-                      height: defaultPadding,
-                    ),
-                  ],
-                ),
+              Header(
+                headerText: 'ROBOTIC DASHBOARD',
               ),
-              if (Responsive.isDesktop(context))
-                Expanded(flex: 1, child: LogsViewer())
+              DeviceInfo(),
+              ControllerDashboard(),
+              SizedBox(
+                height: defaultPadding,
+              ),
             ],
-          ))),
-    );
+          ),
+        ),
+        if (Responsive.isDesktop(context))
+          Expanded(flex: 1, child: LogsViewer())
+      ],
+    ));
   }
 }
 

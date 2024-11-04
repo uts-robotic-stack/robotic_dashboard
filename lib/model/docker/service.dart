@@ -1,7 +1,7 @@
-import 'package:robotics_dashboard/model/docker/network.dart';
-import 'package:robotics_dashboard/model/docker/option.dart';
-import 'package:robotics_dashboard/model/docker/resource.dart';
-import 'package:robotics_dashboard/model/docker/volume.dart';
+import 'package:robotic_dashboard/model/docker/network.dart';
+import 'package:robotic_dashboard/model/docker/option.dart';
+import 'package:robotic_dashboard/model/docker/resource.dart';
+import 'package:robotic_dashboard/model/docker/volume.dart';
 
 class Service {
   final String image;

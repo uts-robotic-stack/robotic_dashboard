@@ -90,12 +90,12 @@ BEGIN
         BLOCK "040904e4"
         BEGIN
             VALUE "CompanyName", "com.example" "\0"
-            VALUE "FileDescription", "robotics_dashboard" "\0"
+            VALUE "FileDescription", "robotic_dashboard" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "robotics_dashboard" "\0"
+            VALUE "InternalName", "robotic_dashboard" "\0"
             VALUE "LegalCopyright", "Copyright (C) 2024 com.example. All rights reserved." "\0"
-            VALUE "OriginalFilename", "robotics_dashboard.exe" "\0"
-            VALUE "ProductName", "robotics_dashboard" "\0"
+            VALUE "OriginalFilename", "robotic_dashboard.exe" "\0"
+            VALUE "ProductName", "robotic_dashboard" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END

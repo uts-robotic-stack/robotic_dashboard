@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:robotics_dashboard/service/user_client.dart';
+import 'package:robotic_dashboard/service/navigation_provider.dart';
+import 'package:robotic_dashboard/service/user_client.dart';
 
 class SideMenu extends StatefulWidget {
   const SideMenu({Key? key}) : super(key: key);
@@ -133,21 +134,27 @@ class _SideMenuState extends State<SideMenu> {
                   padding: const EdgeInsets.all(8.0),
                   child: IconButton(
                     icon: const Icon(Icons.home, color: Colors.white),
-                    onPressed: () {},
+                    onPressed: () {
+                      context.read<NavigationProvider>().setPage('dashboard');
+                    },
                   ),
                 ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: IconButton(
                     icon: const Icon(Icons.leaderboard, color: Colors.white),
-                    onPressed: () {},
+                    onPressed: () {
+                      context.read<NavigationProvider>().setPage('stats');
+                    },
                   ),
                 ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: IconButton(
                     icon: const Icon(Icons.settings, color: Colors.white),
-                    onPressed: () {},
+                    onPressed: () {
+                      context.read<NavigationProvider>().setPage('settings');
+                    },
                   ),
                 ),
                 Padding(

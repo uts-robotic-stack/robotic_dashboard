@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:robotics_dashboard/utils/constants.dart';
+import 'package:robotic_dashboard/utils/constants.dart';
 
 class ServiceCard extends StatelessWidget {
   const ServiceCard({super.key});

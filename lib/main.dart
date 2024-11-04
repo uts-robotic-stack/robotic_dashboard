@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:robotics_dashboard/service/user_client.dart';
-import 'package:robotics_dashboard/service/service_log_ws_client.dart';
-import 'package:robotics_dashboard/utils/constants.dart';
-import 'package:robotics_dashboard/view/screens/homescreen.dart';
+import 'package:robotic_dashboard/service/navigation_provider.dart';
+import 'package:robotic_dashboard/service/user_client.dart';
+import 'package:robotic_dashboard/service/service_log_ws_client.dart';
+import 'package:robotic_dashboard/utils/constants.dart';
+import 'package:robotic_dashboard/view/screens/mainscreen.dart';
 
 void main() {
   runApp(MultiProvider(providers: [
     ChangeNotifierProvider(create: (_) => ServiceLogsWSClient()),
-    ChangeNotifierProvider(create: (_) => UserProvider())
+    ChangeNotifierProvider(create: (_) => UserProvider()),
+    ChangeNotifierProvider(create: (_) => NavigationProvider())
   ], child: const RoboticsDashboard()));
 }
 
@@ -28,7 +30,7 @@ class RoboticsDashboard extends StatelessWidget {
             ),
         canvasColor: primaryColor,
       ),
-      home: const HomeScreen(),
+      home: const MainScreen(),
     );
   }
 }

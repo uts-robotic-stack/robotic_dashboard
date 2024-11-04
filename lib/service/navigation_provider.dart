@@ -1,14 +1,12 @@
-// navigation_provider.dart
 import 'package:flutter/material.dart';
-import 'package:robotics_dashboard/view/screens/homescreen.dart';
 
 class NavigationProvider extends ChangeNotifier {
-  int _selectedIndex = 0;
+  String _selectedPage = "dashboard";
 
-  int get selectedIndex => _selectedIndex;
+  String get selectedPage => _selectedPage;
 
-  void setIndex(int index) {
-    _selectedIndex = index;
+  void setPage(String page) {
+    _selectedPage = page;
     notifyListeners();
   }
 }
