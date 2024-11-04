@@ -30,7 +30,7 @@ class _DeviceInfoListState extends State<DeviceInfoList> {
     {
       "icon": Icons.collections_bookmark_outlined,
       "mainText": "Loading...",
-      "subText": "Software version"
+      "subText": "Supervisor version"
     },
     {
       "icon": Icons.settings_ethernet,

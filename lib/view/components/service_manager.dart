@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:robotic_dashboard/service/service_http_client.dart';
 import 'package:robotic_dashboard/service/service_log_ws_client.dart';
+import 'package:robotic_dashboard/view/widgets/adaptive_switch.dart';
 import 'package:robotic_dashboard/view/widgets/pdf_downloader.dart';
 import 'package:http/http.dart' as http;
 import 'package:robotic_dashboard/responsive/responsive.dart';
@@ -25,10 +27,12 @@ class _ServiceManagerState extends State<ServiceManager> {
   final List<String> _excludedServices = [];
 
   Timer? _timer;
-  final Duration _refreshDuration = const Duration(seconds: 5);
+  final Duration _refreshDuration = const Duration(seconds: 1);
 
   String _logOfService = "robotic_supervisor";
   String get logOfService => _logOfService;
+
+  final ServiceHttpClient _clientProvider = ServiceHttpClient();
 
   @override
   void initState() {
@@ -45,75 +49,32 @@ class _ServiceManagerState extends State<ServiceManager> {
   }
 
   Future<void> _fetchDefaultServices() async {
-    final response = await http.get(
-      Uri.parse('http://localhost:8080/api/v1/supervisor/default'),
-      headers: {
-        'Authorization': 'Bearer robotics',
-      },
-    );
-
-    if (response.statusCode == 200) {
-      final Map<String, dynamic> jsonResponse = jsonDecode(response.body);
-      final Map<String, dynamic> servicesMap = jsonResponse['services'];
-      final Map<String, Service> services = {};
-
-      for (var entry in servicesMap.entries) {
-        services[entry.key] =
-            Service.fromJson(entry.value as Map<String, dynamic>);
-        services[entry.key]?.status = "off";
-      }
-
+    try {
+      final services = await _clientProvider.fetchDefaultServices();
       setState(() {
         _services.clear();
         _services.addAll(services);
       });
-    } else {}
+    } catch (error) {
+      // Handle errors here
+    }
   }
 
   Future<void> _fetchExcludedServices() async {
-    final response = await http.get(
-      Uri.parse('http://localhost:8080/api/v1/supervisor/excluded'),
-      headers: {
-        'Authorization': 'Bearer robotics',
-      },
-    );
-
-    if (response.statusCode == 200) {
-      final List<dynamic> jsonResponse =
-          jsonDecode(response.body) as List<dynamic>;
-
-      // Convert the dynamic list to a List<String>
-      final List<String> services = jsonResponse.cast<String>();
+    try {
+      final services = await _clientProvider.fetchExcludedServices();
       setState(() {
         _excludedServices.clear();
         _excludedServices.addAll(services);
       });
-    } else {
-      // print('Failed to load services with status code: ${response.statusCode}');
+    } catch (error) {
+      // Handle errors here
     }
   }
 
   Future<void> _fetchCurrentServices() async {
-    final response = await http.get(
-      Uri.parse('http://localhost:8080/api/v1/supervisor/all'),
-      headers: {
-        'Authorization': 'Bearer robotics',
-        "Content-Type": "application/json"
-      },
-    );
-
-    if (response.statusCode == 200) {
-      final Map<String, dynamic> jsonResponse = jsonDecode(response.body);
-      final Map<String, dynamic> servicesMap = jsonResponse['services'];
-      final Map<String, Service> services = {};
-
-      // print(servicesMap);
-
-      for (var entry in servicesMap.entries) {
-        services[entry.key] =
-            Service.fromJson(entry.value as Map<String, dynamic>);
-      }
-
+    try {
+      final services = await _clientProvider.fetchCurrentServices();
       setState(() {
         for (var entry in services.entries) {
           if (!_excludedServices.contains(entry.key)) {
@@ -124,132 +85,41 @@ class _ServiceManagerState extends State<ServiceManager> {
           }
         }
       });
-    } else {}
+    } catch (error) {
+      // Handle errors here
+    }
   }
 
-  // Function to send HTTP request containing the current service information
   Future<void> _loadAndRunService(Service service) async {
-    const String endpointUrl =
-        'http://localhost:8080/api/v1/supervisor/load-run'; // Replace with your actual endpoint
-
-    final Map<String, dynamic> serviceMap = {
-      'services': {
-        service.name: service.toJson(),
-      },
-    };
-
     try {
-      final response = await http.post(
-        Uri.parse(endpointUrl),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer robotics',
-        },
-        body: json.encode(serviceMap),
-      );
-      if (response.statusCode == 200) {
-        setState(() {
-          // _services[service.name]?.status = "running";
-        });
-      } else {
-        // print('Failed to send service info: ${response.statusCode}');
-      }
+      await _clientProvider.loadAndRunService(service);
+      setState(() {
+        // Update UI if necessary
+      });
     } catch (error) {
-      // print('Error sending service info: $error');
+      // Handle errors here
     }
   }
 
-  // Function to send HTTP request containing the current service information
   Future<void> _stopAndUnloadService(Service service) async {
-    const String endpointUrl =
-        'http://localhost:8080/api/v1/supervisor/stop-unload'; // Replace with your actual endpoint
-
-    final Map<String, dynamic> serviceMap = {
-      'services': {
-        service.name: "",
-      },
-    };
-
     try {
-      final response = await http.post(
-        Uri.parse(endpointUrl),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer robotics',
-        },
-        body: json.encode(serviceMap),
-      );
-
-      if (response.statusCode == 200) {
-        // print('Service info successfully sent for ${service.name}');
-        setState(() {
-          _services[service.name]?.status = "off";
-        });
-      } else {
-        // print('Failed to send service info: ${response.statusCode}');
-      }
+      await _clientProvider.stopAndUnloadService(service);
+      setState(() {
+        _services[service.name]?.status = "off";
+      });
     } catch (error) {
-      // print('Error sending service info: $error');
+      // Handle errors here
     }
   }
 
-  // Function to send HTTP request containing the current service information
   Future<void> _resetService(Service service) async {
-    const String stopUnloadUrl =
-        'http://localhost:8080/api/v1/supervisor/stop-unload'; // Replace with your actual endpoint
-
-    final Map<String, dynamic> serviceMap = {
-      'services': {
-        service.name: "",
-      },
-    };
-
     try {
-      final response = await http.post(
-        Uri.parse(stopUnloadUrl),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer robotics',
-        },
-        body: json.encode(serviceMap),
-      );
-
-      if (response.statusCode == 200) {
-        // print('Service info successfully sent for ${service.name}');
-        const String loadStartUrl =
-            'http://localhost:8080/api/v1/supervisor/load-run'; // Replace with your actual endpoint
-
-        final Map<String, dynamic> serviceMap = {
-          'services': {
-            service.name: service.toJson(),
-          },
-        };
-
-        try {
-          final response = await http.post(
-            Uri.parse(loadStartUrl),
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': 'Bearer robotics',
-            },
-            body: json.encode(serviceMap),
-          );
-          if (response.statusCode == 200) {
-            // print('Service info successfully sent for ${service.name}');
-            setState(() {
-              // _services[service.name]?.status = "running";
-            });
-          } else {
-            // print('Failed to send service info: ${response.statusCode}');
-          }
-        } catch (error) {
-          // print('Error sending service info: $error');
-        }
-      } else {
-        // print('Failed to send service info: ${response.statusCode}');
-      }
+      await _clientProvider.resetService(service);
+      setState(() {
+        // Update service status if necessary
+      });
     } catch (error) {
-      // print('Error sending service info: $error');
+      // Handle errors here
     }
   }
 
@@ -274,10 +144,6 @@ class _ServiceManagerState extends State<ServiceManager> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text(
-            service.name,
-            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-          ),
           content: SizedBox(
             width: 900,
             height: 500,
@@ -289,7 +155,7 @@ class _ServiceManagerState extends State<ServiceManager> {
                     tabs: [
                       Tab(
                         child: Text(
-                          'FAQ',
+                          'Settings',
                           style: TextStyle(fontSize: 16),
                         ),
                       ),
@@ -301,7 +167,7 @@ class _ServiceManagerState extends State<ServiceManager> {
                       ),
                       Tab(
                         child: Text(
-                          'Settings',
+                          'FAQ',
                           style: TextStyle(fontSize: 16),
                         ),
                       ),
@@ -311,9 +177,9 @@ class _ServiceManagerState extends State<ServiceManager> {
                   Expanded(
                     child: TabBarView(
                       children: [
-                        _buildFAQTab(),
-                        _buildInformationTab(),
                         _buildSettingsTab(envVarControllers, service),
+                        _buildInformationTab(),
+                        _buildFAQTab(),
                       ],
                     ),
                   ),
@@ -368,11 +234,161 @@ class _ServiceManagerState extends State<ServiceManager> {
 
   Widget _buildSettingsTab(
       Map<String, TextEditingController> envVarControllers, Service service) {
-    return SingleChildScrollView(
-      child: ListBody(
-        children: <Widget>[
-          if (isAdmin)
-            ...envVarControllers.entries.map((entry) => Row(
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: defaultPadding),
+      child: SingleChildScrollView(
+        child: ListBody(
+          children: <Widget>[
+            if (isAdmin)
+              ..._buildAdminSettings(envVarControllers)
+            else
+              ..._buildUserSettings(service),
+          ],
+        ),
+      ),
+    );
+  }
+
+  List<Widget> _buildAdminSettings(
+      Map<String, TextEditingController> envVarControllers) {
+    return [
+      const SizedBox(height: 16.0),
+      const Text(
+        'Summary',
+        style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w500),
+      ),
+      const SizedBox(height: 16.0),
+      const Row(children: [
+        Expanded(
+          flex: 1,
+          child: Text(
+            'Name',
+            style: TextStyle(
+              fontSize: 16,
+              color: Color.fromARGB(255, 135, 135, 135),
+            ),
+          ),
+        ),
+        Expanded(
+          flex: 3,
+          child: Text(
+            'dobot_controller',
+            style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w500),
+          ),
+        )
+      ]),
+
+      const SizedBox(height: 16.0),
+      const Row(children: [
+        Expanded(
+          flex: 1,
+          child: Text(
+            'Status',
+            style: TextStyle(
+              fontSize: 16,
+              color: Color.fromARGB(255, 135, 135, 135),
+            ),
+          ),
+        ),
+        Expanded(
+          flex: 3,
+          child: Text(
+            'Running',
+            style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w500),
+          ),
+        )
+      ]),
+
+      const SizedBox(height: 16.0),
+      const Row(children: [
+        Expanded(
+          flex: 1,
+          child: Text(
+            'Software version',
+            style: TextStyle(
+              fontSize: 16,
+              color: Color.fromARGB(255, 135, 135, 135),
+            ),
+          ),
+        ),
+        Expanded(
+          flex: 3,
+          child: Text(
+            'a24becd6',
+            style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w500),
+          ),
+        )
+      ]),
+      const SizedBox(height: 16.0),
+      const Divider(), // Horizontal line // Add spacing between envVars and static texts
+      const SizedBox(height: 16.0),
+      const Text(
+        'Settings',
+        style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w500),
+      ),
+      const SizedBox(height: 8.0),
+      ...envVarControllers.entries
+          .map((entry) => Row(
+                children: [
+                  Expanded(
+                    flex: 1,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(
+                          height: 5,
+                        ),
+                        Text(entry.key,
+                            style: const TextStyle(
+                                fontWeight: FontWeight.w600, fontSize: 14.0)),
+                      ],
+                    ),
+                  ),
+                  Expanded(
+                    flex: 3,
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 8.0),
+                      child: TextFormField(
+                        controller: entry.value,
+                        showCursor: true,
+                      ),
+                    ),
+                  ),
+                ],
+              ))
+          .toList(),
+      const SizedBox(height: 8.0),
+      Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        const Expanded(
+          flex: 1,
+          child: Padding(
+            padding: EdgeInsets.only(top: 10.0),
+            child: Text(
+              'AUTO-UPDATE',
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        ),
+        Expanded(
+          flex: 3,
+          child: AdaptiveSwitch(
+            follow: true,
+            scale: 0.8,
+            onChanged: (value) {},
+          ),
+        )
+      ]),
+    ];
+  }
+
+  List<Widget> _buildUserSettings(Service service) {
+    return service.envVars!.entries
+        .map((entry) => Column(
+              children: [
+                Row(
                   children: [
                     Expanded(
                       flex: 1,
@@ -384,49 +400,20 @@ class _ServiceManagerState extends State<ServiceManager> {
                       flex: 2,
                       child: Padding(
                         padding: const EdgeInsets.only(left: 8.0),
-                        child: TextFormField(
-                          controller: entry.value,
-                          decoration: const InputDecoration(
-                            border: UnderlineInputBorder(),
-                            contentPadding: EdgeInsets.symmetric(
-                                vertical: 0, horizontal: 0),
-                          ),
+                        child: SelectableText(
+                          entry.value,
+                          style: const TextStyle(fontSize: 16.0),
                         ),
                       ),
                     ),
                   ],
-                ))
-          else
-            ...service.envVars!.entries.map((entry) => Column(
-                  children: [
-                    Row(
-                      children: [
-                        Expanded(
-                          flex: 1,
-                          child: Text('${entry.key}:',
-                              style: const TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 16.0)),
-                        ),
-                        Expanded(
-                          flex: 2,
-                          child: Padding(
-                            padding: const EdgeInsets.only(left: 8.0),
-                            child: SelectableText(
-                              entry.value,
-                              style: const TextStyle(fontSize: 16.0),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(
-                      height: 12.0,
-                    )
-                  ],
-                )),
-        ],
-      ),
-    );
+                ),
+                const SizedBox(
+                  height: 12.0,
+                )
+              ],
+            ))
+        .toList();
   }
 
   Widget _buildInformationTab() {
@@ -434,20 +421,7 @@ class _ServiceManagerState extends State<ServiceManager> {
   }
 
   Widget _buildFAQTab() {
-    return Center(
-      child: HighlightView(
-        '''
-def greet(name):
-    print(f"Hello, {name}!")
-
-greet("World")
-            ''',
-        language: 'python',
-        theme: atomOneLightTheme,
-        padding: const EdgeInsets.all(12),
-        textStyle: const TextStyle(fontFamily: 'Courier', fontSize: 16),
-      ),
-    );
+    return Container();
   }
 
   Widget _buildCommandKeys(BuildContext context, Service data) {
@@ -577,7 +551,7 @@ greet("World")
 
   Widget _buildServiceName(Service data) {
     return SizedBox(
-      width: 200,
+      width: 175,
       child: Padding(
         padding:
             const EdgeInsets.symmetric(vertical: 5, horizontal: defaultPadding),
