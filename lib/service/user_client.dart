@@ -17,7 +17,7 @@ class UserProvider with ChangeNotifier {
 
     try {
       final response = await http.post(
-        Uri.parse('http://localhost:8080/api/v1/signin'),
+        Uri.parse('http://10.211.55.7:8080/api/v1/signin'),
         headers: <String, String>{
           'Content-Type': "application/json",
         },
@@ -49,7 +49,7 @@ class UserProvider with ChangeNotifier {
 
     try {
       final response = await http.get(
-        Uri.parse('http://localhost:8080/api/v1/signin/role'),
+        Uri.parse('http://10.211.55.7:8080/api/v1/signin/role'),
         headers: <String, String>{
           'Authorization': _token!,
         },

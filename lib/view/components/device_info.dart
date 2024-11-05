@@ -16,30 +16,82 @@ class DeviceInfoList extends StatefulWidget {
 
 class _DeviceInfoListState extends State<DeviceInfoList> {
   List<Map<String, dynamic>> items = [
-    {"icon": Icons.computer, "mainText": "Loading...", "subText": "Type"},
+    {
+      "icon": Icons.computer,
+      "mainText": const SelectableText(
+        "Loading",
+        style: TextStyle(
+            fontFamily: 'Poppins',
+            fontSize: 14,
+            fontStyle: FontStyle.normal,
+            fontWeight: FontWeight.w500,
+            color: Colors.black),
+      ),
+      "subText": "Type"
+    },
     {
       "icon": Icons.calendar_today,
-      "mainText": "Loading...",
+      "mainText": const SelectableText(
+        "Loading",
+        style: TextStyle(
+            fontFamily: 'Poppins',
+            fontSize: 14,
+            fontStyle: FontStyle.normal,
+            fontWeight: FontWeight.w500,
+            color: Colors.black),
+      ),
       "subText": "Last on"
     },
     {
       "icon": Icons.watch_later_outlined,
-      "mainText": "Loading...",
+      "mainText": const SelectableText(
+        "Loading",
+        style: TextStyle(
+            fontFamily: 'Poppins',
+            fontSize: 14,
+            fontStyle: FontStyle.normal,
+            fontWeight: FontWeight.w500,
+            color: Colors.black),
+      ),
       "subText": "On duration"
     },
     {
       "icon": Icons.collections_bookmark_outlined,
-      "mainText": "Loading...",
+      "mainText": const SelectableText(
+        "Loading",
+        style: TextStyle(
+            fontFamily: 'Poppins',
+            fontSize: 14,
+            fontStyle: FontStyle.normal,
+            fontWeight: FontWeight.w500,
+            color: Colors.black),
+      ),
       "subText": "Supervisor version"
     },
     {
       "icon": Icons.settings_ethernet,
-      "mainText": "Loading...",
+      "mainText": const SelectableText(
+        "Loading",
+        style: TextStyle(
+            fontFamily: 'Poppins',
+            fontSize: 14,
+            fontStyle: FontStyle.normal,
+            fontWeight: FontWeight.w500,
+            color: Colors.black),
+      ),
       "subText": "IP address"
     },
     {
       "icon": Icons.cloud_done_outlined,
-      "mainText": "Loading...",
+      "mainText": const SelectableText(
+        "Loading",
+        style: TextStyle(
+            fontFamily: 'Poppins',
+            fontSize: 14,
+            fontStyle: FontStyle.normal,
+            fontWeight: FontWeight.w500,
+            color: Colors.black),
+      ),
       "subText": "Fleet"
     },
   ];
@@ -62,7 +114,7 @@ class _DeviceInfoListState extends State<DeviceInfoList> {
 
   Future<void> _fetchData() async {
     final response = await http.get(
-      Uri.parse('http://localhost:8080/api/v1/device/info'),
+      Uri.parse('http://10.211.55.7:8080/api/v1/device/info'),
       headers: {
         'Authorization': 'Bearer robotics',
         "Content-Type":
@@ -72,33 +124,120 @@ class _DeviceInfoListState extends State<DeviceInfoList> {
 
     if (response.statusCode == 200) {
       final device = Device.fromJson(json.decode(response.body));
+
+      Map<String, NetworkDevice> devices = Map.from(device.ipAddress);
+      devices.removeWhere((key, networkDevice) =>
+          !(networkDevice.deviceName.contains('wlan') ||
+              networkDevice.deviceName.contains('eth') ||
+              networkDevice.deviceName.contains('enp')));
+      devices.removeWhere(
+          (key, networkDevice) => (networkDevice.deviceName.contains('veth')));
+      Widget ipAddressWidget = Row(
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: devices.entries.map((entry) {
+              final networkDevice = entry.value;
+              return SelectableText(
+                '${networkDevice.deviceName}:',
+                style: const TextStyle(
+                    fontFamily: 'Poppins',
+                    fontSize: 14,
+                    fontStyle: FontStyle.normal,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.black),
+              );
+            }).toList(),
+          ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: devices.entries.map((entry) {
+              final networkDevice = entry.value;
+              return SelectableText(
+                networkDevice.ipAddress,
+                style: const TextStyle(
+                    fontFamily: 'Poppins',
+                    fontSize: 14,
+                    fontStyle: FontStyle.normal,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.black),
+              );
+            }).toList(),
+          ),
+        ],
+      );
+
       setState(() {
         items = [
-          {"icon": Icons.computer, "mainText": device.type, "subText": "Type"},
+          {
+            "icon": Icons.computer,
+            "mainText": SelectableText(
+              device.type,
+              style: const TextStyle(
+                  fontFamily: 'Poppins',
+                  fontSize: 14,
+                  fontStyle: FontStyle.normal,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.black),
+            ),
+            "subText": "Type"
+          },
           {
             "icon": Icons.calendar_today,
-            "mainText": formatDate(device.lastOn),
+            "mainText": SelectableText(
+              formatDate(device.lastOn),
+              style: const TextStyle(
+                  fontFamily: 'Poppins',
+                  fontSize: 14,
+                  fontStyle: FontStyle.normal,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.black),
+            ),
             "subText": "Last on"
           },
           {
             "icon": Icons.watch_later_outlined,
-            "mainText": formatDuration(device.onDuration),
+            "mainText": SelectableText(
+              formatDuration(device.onDuration),
+              style: const TextStyle(
+                  fontFamily: 'Poppins',
+                  fontSize: 14,
+                  fontStyle: FontStyle.normal,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.black),
+            ),
             "subText": "On duration"
           },
           {
             "icon": Icons.collections_bookmark_outlined,
-            "mainText": device.softwareVersion
-                .substring("sha256:".length, "sha256:".length + 8),
+            "mainText": SelectableText(
+              device.softwareVersion
+                  .substring("sha256:".length, "sha256:".length + 8),
+              style: const TextStyle(
+                  fontFamily: 'Poppins',
+                  fontSize: 14,
+                  fontStyle: FontStyle.normal,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.black),
+            ),
             "subText": "Software version"
           },
           {
             "icon": Icons.settings_ethernet,
-            "mainText": device.ipAddress,
+            "mainText": ipAddressWidget,
             "subText": "IP address"
           },
           {
             "icon": Icons.cloud_done_outlined,
-            "mainText": device.fleet,
+            "mainText": SelectableText(
+              device.fleet,
+              style: const TextStyle(
+                  fontFamily: 'Poppins',
+                  fontSize: 14,
+                  fontStyle: FontStyle.normal,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.black),
+            ),
             "subText": "Fleet"
           },
         ];
@@ -126,42 +265,32 @@ class _DeviceInfoListState extends State<DeviceInfoList> {
           itemCount: items.length,
           itemBuilder: (context, index) {
             final item = items[index];
-            return Container(
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(top: 4.0),
-                    child: Icon(
-                      item["icon"] as IconData,
-                      size: 25,
-                      color: const Color.fromARGB(255, 126, 126, 126),
+            return Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(top: 4.0),
+                  child: Icon(
+                    item["icon"] as IconData,
+                    size: 25,
+                    color: const Color.fromARGB(255, 126, 126, 126),
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      item["subText"] as String,
+                      style: const TextStyle(
+                        fontSize: 12,
+                        color: Colors.grey,
+                      ),
                     ),
-                  ),
-                  const SizedBox(width: 16),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        item["subText"] as String,
-                        style: const TextStyle(
-                          fontSize: 12,
-                          color: Colors.grey,
-                        ),
-                      ),
-                      SelectableText(
-                        item["mainText"] as String,
-                        style: const TextStyle(
-                            fontFamily: 'Poppins',
-                            fontSize: 14,
-                            fontStyle: FontStyle.normal,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.black),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
+                    item["mainText"] as Widget
+                  ],
+                ),
+              ],
             );
           },
         );

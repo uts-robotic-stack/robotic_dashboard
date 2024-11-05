@@ -30,7 +30,7 @@ class ServiceLogsWSClient with ChangeNotifier {
 
     // Establish new WebSocket connection
     final url =
-        'ws://localhost:8080/api/v1/supervisor/log-stream?container=$_serviceName';
+        'ws://10.211.55.7:8080/api/v1/supervisor/log-stream?container=$_serviceName';
     _channel = WebSocketChannel.connect(Uri.parse(url));
 
     // Listen to the stream and update logs

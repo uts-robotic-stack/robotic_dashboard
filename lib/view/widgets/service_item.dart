@@ -278,7 +278,7 @@ class _ServiceItemState extends State<ServiceItem> {
         child: ListBody(
           children: <Widget>[
             if (isAdmin)
-              ..._buildAdminSettings(envVarControllers)
+              ..._buildAdminSettings(envVarControllers, widget.data)
             else
               ..._buildUserSettings(service),
           ],
@@ -288,7 +288,7 @@ class _ServiceItemState extends State<ServiceItem> {
   }
 
   List<Widget> _buildAdminSettings(
-      Map<String, TextEditingController> envVarControllers) {
+      Map<String, TextEditingController> envVarControllers, Service data) {
     return [
       const Padding(
         padding: EdgeInsets.only(top: 16.0, bottom: 16.0),
@@ -297,68 +297,11 @@ class _ServiceItemState extends State<ServiceItem> {
           style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w500),
         ),
       ),
-
-      const Row(children: [
-        Expanded(
-          flex: 1,
-          child: Text(
-            'Name',
-            style: TextStyle(
-              fontSize: 16,
-              color: Color.fromARGB(255, 135, 135, 135),
-            ),
-          ),
-        ),
-        Expanded(
-          flex: 3,
-          child: Text(
-            'dobot_controller',
-            style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w500),
-          ),
-        )
-      ]),
-
+      ServiceSummaryItem(field: "Name", value: data.name),
       const SizedBox(height: 16.0),
-      const Row(children: [
-        Expanded(
-          flex: 1,
-          child: Text(
-            'Status',
-            style: TextStyle(
-              fontSize: 16,
-              color: Color.fromARGB(255, 135, 135, 135),
-            ),
-          ),
-        ),
-        Expanded(
-          flex: 3,
-          child: Text(
-            'Running',
-            style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w500),
-          ),
-        )
-      ]),
-
+      ServiceSummaryItem(field: "Status", value: data.status ?? "off"),
       const SizedBox(height: 16.0),
-      const Row(children: [
-        Expanded(
-          flex: 1,
-          child: Text(
-            'Software version',
-            style: TextStyle(
-              fontSize: 16,
-              color: Color.fromARGB(255, 135, 135, 135),
-            ),
-          ),
-        ),
-        Expanded(
-          flex: 3,
-          child: Text(
-            'a24becd6',
-            style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w500),
-          ),
-        )
-      ]),
+      ServiceSummaryItem(field: "Software version", value: data.image),
       const SizedBox(height: 16.0),
       const Divider(), // Horizontal line // Add spacing between envVars and static texts
       const SizedBox(height: 16.0),
@@ -526,5 +469,35 @@ class _ServiceItemState extends State<ServiceItem> {
         const SizedBox(height: defaultPadding),
       ],
     );
+  }
+}
+
+class ServiceSummaryItem extends StatelessWidget {
+  final String field;
+  final String value;
+  const ServiceSummaryItem(
+      {super.key, required this.field, required this.value});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(children: [
+      Expanded(
+        flex: 1,
+        child: Text(
+          field,
+          style: const TextStyle(
+            fontSize: 16,
+            color: Color.fromARGB(255, 135, 135, 135),
+          ),
+        ),
+      ),
+      Expanded(
+        flex: 3,
+        child: Text(
+          value,
+          style: const TextStyle(fontSize: 16.0, fontWeight: FontWeight.w500),
+        ),
+      )
+    ]);
   }
 }
