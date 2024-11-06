@@ -97,7 +97,7 @@ class _DeviceInfoListState extends State<DeviceInfoList> {
   ];
 
   Timer? _timer;
-  final Duration _refreshDuration = const Duration(seconds: 10);
+  final Duration _refreshDuration = const Duration(seconds: 1);
 
   @override
   void initState() {
@@ -114,7 +114,7 @@ class _DeviceInfoListState extends State<DeviceInfoList> {
 
   Future<void> _fetchData() async {
     final response = await http.get(
-      Uri.parse('http://10.211.55.7:8080/api/v1/device/info'),
+      Uri.parse('http://192.168.27.1:8080/api/v1/device/info'),
       headers: {
         'Authorization': 'Bearer robotics',
         "Content-Type":
@@ -124,7 +124,6 @@ class _DeviceInfoListState extends State<DeviceInfoList> {
 
     if (response.statusCode == 200) {
       final device = Device.fromJson(json.decode(response.body));
-
       Map<String, NetworkDevice> devices = Map.from(device.ipAddress);
       devices.removeWhere((key, networkDevice) =>
           !(networkDevice.deviceName.contains('wlan') ||
@@ -142,7 +141,7 @@ class _DeviceInfoListState extends State<DeviceInfoList> {
                 '${networkDevice.deviceName}:',
                 style: const TextStyle(
                     fontFamily: 'Poppins',
-                    fontSize: 14,
+                    fontSize: 13,
                     fontStyle: FontStyle.normal,
                     fontWeight: FontWeight.w500,
                     color: Colors.black),
@@ -157,7 +156,7 @@ class _DeviceInfoListState extends State<DeviceInfoList> {
                 networkDevice.ipAddress,
                 style: const TextStyle(
                     fontFamily: 'Poppins',
-                    fontSize: 14,
+                    fontSize: 13,
                     fontStyle: FontStyle.normal,
                     fontWeight: FontWeight.w500,
                     color: Colors.black),
@@ -175,7 +174,7 @@ class _DeviceInfoListState extends State<DeviceInfoList> {
               device.type,
               style: const TextStyle(
                   fontFamily: 'Poppins',
-                  fontSize: 14,
+                  fontSize: 13,
                   fontStyle: FontStyle.normal,
                   fontWeight: FontWeight.w500,
                   color: Colors.black),
@@ -188,7 +187,7 @@ class _DeviceInfoListState extends State<DeviceInfoList> {
               formatDate(device.lastOn),
               style: const TextStyle(
                   fontFamily: 'Poppins',
-                  fontSize: 14,
+                  fontSize: 13,
                   fontStyle: FontStyle.normal,
                   fontWeight: FontWeight.w500,
                   color: Colors.black),
@@ -201,7 +200,7 @@ class _DeviceInfoListState extends State<DeviceInfoList> {
               formatDuration(device.onDuration),
               style: const TextStyle(
                   fontFamily: 'Poppins',
-                  fontSize: 14,
+                  fontSize: 13,
                   fontStyle: FontStyle.normal,
                   fontWeight: FontWeight.w500,
                   color: Colors.black),
@@ -215,7 +214,7 @@ class _DeviceInfoListState extends State<DeviceInfoList> {
                   .substring("sha256:".length, "sha256:".length + 8),
               style: const TextStyle(
                   fontFamily: 'Poppins',
-                  fontSize: 14,
+                  fontSize: 13,
                   fontStyle: FontStyle.normal,
                   fontWeight: FontWeight.w500,
                   color: Colors.black),
@@ -233,7 +232,7 @@ class _DeviceInfoListState extends State<DeviceInfoList> {
               device.fleet,
               style: const TextStyle(
                   fontFamily: 'Poppins',
-                  fontSize: 14,
+                  fontSize: 13,
                   fontStyle: FontStyle.normal,
                   fontWeight: FontWeight.w500,
                   color: Colors.black),
@@ -283,7 +282,7 @@ class _DeviceInfoListState extends State<DeviceInfoList> {
                     Text(
                       item["subText"] as String,
                       style: const TextStyle(
-                        fontSize: 12,
+                        fontSize: 11,
                         color: Colors.grey,
                       ),
                     ),

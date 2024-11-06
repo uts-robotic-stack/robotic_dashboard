@@ -36,10 +36,12 @@ class Device {
   });
 
   factory Device.fromJson(Map<String, dynamic> json) {
-    // Parsing the `ipAddress` field as a map of `NetworkDevice`
-    Map<String, NetworkDevice> ipMap =
-        (json['ip_address'] as Map<String, dynamic>)
-            .map((key, value) => MapEntry(key, NetworkDevice.fromJson(value)));
+    // Check if `ip_address` is null, if so, set `ipMap` to an empty map
+    Map<String, NetworkDevice> ipMap = json['ip_address'] == null
+        ? {}
+        : (json['ip_address'] as Map<String, dynamic>).map(
+            (key, value) => MapEntry(key, NetworkDevice.fromJson(value)),
+          );
 
     return Device(
       type: json['device_type'],

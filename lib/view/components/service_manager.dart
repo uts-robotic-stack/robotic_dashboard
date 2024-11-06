@@ -14,24 +14,28 @@ class ServiceManager extends StatefulWidget {
 
 class _ServiceManagerState extends State<ServiceManager> {
   final bool isAdmin = true; // Set this based on user role
+  bool _fetchDefault = false;
   final Map<String, Service> _services = {};
   final List<String> _excludedServices = [];
 
-  Timer? _timer;
-  final Duration _refreshDuration = const Duration(seconds: 1);
+  Timer? _currentServiceTimer;
+  Timer? _excludedTimer;
+  final Duration _currentServiceRefreshDur = const Duration(seconds: 5);
+  final Duration _excludedServiceRefreshDur = const Duration(seconds: 5);
   final ServiceHttpClient _clientProvider = ServiceHttpClient();
 
   @override
   void initState() {
     super.initState();
     _fetchDefaultServices();
-    _fetchExcludedServices();
     _startPeriodicFetch();
+    _startPeriodExcludedServiceFetch();
   }
 
   @override
   void dispose() {
-    _timer?.cancel();
+    _currentServiceTimer?.cancel();
+    _excludedTimer?.cancel();
     super.dispose();
   }
 
@@ -41,9 +45,11 @@ class _ServiceManagerState extends State<ServiceManager> {
       setState(() {
         _services.clear();
         _services.addAll(services);
+        _fetchDefault = true;
       });
     } catch (error) {
       // Handle errors here
+      _fetchDefault = false;
     }
   }
 
@@ -77,42 +83,18 @@ class _ServiceManagerState extends State<ServiceManager> {
     }
   }
 
-  // Future<void> _loadAndRunService(Service service) async {
-  //   try {
-  //     await _clientProvider.loadAndRunService(service);
-  //     setState(() {
-  //       // Update UI if necessary
-  //     });
-  //   } catch (error) {
-  //     // Handle errors here
-  //   }
-  // }
-
-  // Future<void> _stopAndUnloadService(Service service) async {
-  //   try {
-  //     await _clientProvider.stopAndUnloadService(service);
-  //     setState(() {
-  //       _services[service.name]?.status = "off";
-  //     });
-  //   } catch (error) {
-  //     // Handle errors here
-  //   }
-  // }
-
-  // Future<void> _resetService(Service service) async {
-  //   try {
-  //     await _clientProvider.resetService(service);
-  //     setState(() {
-  //       // Update service status if necessary
-  //     });
-  //   } catch (error) {
-  //     // Handle errors here
-  //   }
-  // }
-
   void _startPeriodicFetch() {
-    _timer =
-        Timer.periodic(_refreshDuration, (Timer t) => _fetchCurrentServices());
+    _currentServiceTimer = Timer.periodic(_currentServiceRefreshDur, (Timer t) {
+      if (!_fetchDefault) {
+        _fetchCurrentServices();
+      }
+      _fetchCurrentServices();
+    });
+  }
+
+  void _startPeriodExcludedServiceFetch() {
+    _excludedTimer = Timer.periodic(
+        _excludedServiceRefreshDur, (Timer t) => _fetchExcludedServices());
   }
 
   @override
