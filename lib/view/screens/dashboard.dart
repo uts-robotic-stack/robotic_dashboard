@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:robotic_dashboard/responsive/responsive.dart';
+import 'package:robotic_dashboard/service/device_http_client.dart';
 import 'package:robotic_dashboard/utils/constants.dart';
 import 'package:robotic_dashboard/view/components/device_info.dart';
 import 'package:robotic_dashboard/view/components/header.dart';
@@ -43,10 +44,19 @@ class Dashboard extends StatelessWidget {
   }
 }
 
-class DeviceInfo extends StatelessWidget {
+class DeviceInfo extends StatefulWidget {
   const DeviceInfo({
     super.key,
   });
+
+  @override
+  // ignore: library_private_types_in_public_api
+  _DeviceInfoState createState() => _DeviceInfoState();
+}
+
+class _DeviceInfoState extends State<DeviceInfo> {
+  final DeviceHttpClient _deviceHttpClient = DeviceHttpClient();
+  Color _statusColor = const Color.fromARGB(255, 47, 129, 83);
 
   @override
   Widget build(BuildContext context) {
@@ -68,9 +78,18 @@ class DeviceInfo extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text(
-                    "robotics_default",
-                    style: TextStyle(fontSize: 18),
+                  Row(
+                    children: [
+                      const Text(
+                        "robotics_default",
+                        style: TextStyle(fontSize: 18),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 8.0),
+                        child:
+                            Icon(Icons.circle, color: _statusColor, size: 17),
+                      ),
+                    ],
                   ),
                   CustomDropdownButton(
                     header: const DropdownHeader(),
@@ -78,22 +97,24 @@ class DeviceInfo extends StatelessWidget {
                       DropdownItem(
                         text: 'Update',
                         icon: Icons.update,
-                        onSelected: () {
-                          // Implement Shutdown functionality
-                        },
+                        onSelected: () {},
                       ),
                       DropdownItem(
-                        text: 'Shut down',
+                        text: 'Shutdown',
                         icon: Icons.logout,
                         onSelected: () {
-                          // Implement Shutdown functionality
+                          _statusColor = Colors.red;
+                          setState(() {});
+                          _deviceHttpClient.shutdownDevice();
                         },
                       ),
                       DropdownItem(
                         text: 'Reboot',
                         icon: Icons.restart_alt,
                         onSelected: () {
-                          // Implement Shutdown functionality
+                          _statusColor = Colors.red;
+                          setState(() {});
+                          _deviceHttpClient.restartDevice();
                         },
                       ),
                     ],
