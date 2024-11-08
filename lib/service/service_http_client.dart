@@ -1,9 +1,12 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:robotic_dashboard/model/docker/service.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class ServiceHttpClient {
-  static const String _baseUrl = 'http://192.168.27.1:8080/api/v1/supervisor';
+  final String _baseUrl = dotenv.env['BASE_URL'] ??
+      const String.fromEnvironment("BASE_URL",
+          defaultValue: "10.211.55.7:8080");
   static const Map<String, String> _headers = {
     'Authorization': 'Bearer robotics',
     'Content-Type': 'application/json',
@@ -11,7 +14,7 @@ class ServiceHttpClient {
 
   Future<Map<String, Service>> fetchDefaultServices() async {
     final response = await http.get(
-      Uri.parse('$_baseUrl/default'),
+      Uri.parse('http://$_baseUrl/api/v1/supervisor/default'),
       headers: _headers,
     );
 
@@ -33,7 +36,7 @@ class ServiceHttpClient {
 
   Future<List<String>> fetchExcludedServices() async {
     final response = await http.get(
-      Uri.parse('$_baseUrl/excluded'),
+      Uri.parse('http://$_baseUrl/api/v1/supervisor/excluded'),
       headers: _headers,
     );
 
@@ -46,10 +49,9 @@ class ServiceHttpClient {
 
   Future<Map<String, Service>> fetchCurrentServices() async {
     final response = await http.get(
-      Uri.parse('$_baseUrl/all'),
+      Uri.parse('http://$_baseUrl/api/v1/supervisor/all'),
       headers: _headers,
     );
-
     if (response.statusCode == 200) {
       final jsonResponse = jsonDecode(response.body) as Map<String, dynamic>;
       final servicesMap = jsonResponse['services'] as Map<String, dynamic>;
@@ -67,21 +69,24 @@ class ServiceHttpClient {
 
   Future<void> loadAndRunService(Service service) async {
     final response = await http.post(
-      Uri.parse('$_baseUrl/load-run'),
+      Uri.parse('http://$_baseUrl/api/v1/supervisor/load-run'),
       headers: _headers,
       body: json.encode({
         'services': {service.name: service.toJson()}
       }),
     );
-
     if (response.statusCode != 200) {
-      throw Exception('Failed to load and run service');
+      // Decode the response body to extract the error message
+      final Map<String, dynamic> responseBody = json.decode(response.body);
+      final String errorMessage = responseBody['error'] ??
+          'Unknown error'; // Default message if 'error' key is not found
+      throw Exception(errorMessage);
     }
   }
 
   Future<void> stopAndUnloadService(Service service) async {
     final response = await http.post(
-      Uri.parse('$_baseUrl/stop-unload'),
+      Uri.parse('http://$_baseUrl/api/v1/supervisor/stop-unload'),
       headers: _headers,
       body: json.encode({
         'services': {service.name: ""}

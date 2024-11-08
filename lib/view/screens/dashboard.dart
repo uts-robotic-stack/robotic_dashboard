@@ -153,7 +153,7 @@ class ControllerDashboard extends StatelessWidget {
             children: [
               Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
                 Padding(
-                  padding: EdgeInsets.all(defaultPadding / 2),
+                  padding: EdgeInsets.only(top: 8.0, bottom: 8.0, left: 8.0),
                   child: Text(
                     "Services",
                     style: TextStyle(color: Colors.black, fontSize: 14.0),
@@ -166,8 +166,12 @@ class ControllerDashboard extends StatelessWidget {
                   ),
                 ),
               ]),
-              SizedBox(
-                height: defaultPadding,
+              // SizedBox(
+              //   height: defaultPadding,
+              // ),
+              Padding(
+                padding: EdgeInsets.only(top: 6.0),
+                child: Divider(),
               ),
               Expanded(child: ServiceManager()),
             ],

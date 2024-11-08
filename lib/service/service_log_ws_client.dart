@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:web_socket_channel/status.dart' as status;
 
 // Define a ChangeNotifier class to manage state
 class ServiceLogsWSClient with ChangeNotifier {
+  final String _baseUrl = dotenv.env['BASE_URL'] ??
+      const String.fromEnvironment("BASE_URL", defaultValue: "10.211.55.7");
   String _serviceName = "robotic_supervisor";
   WebSocketChannel? _channel;
   final List<String> _logs = [];
@@ -30,7 +33,7 @@ class ServiceLogsWSClient with ChangeNotifier {
 
     // Establish new WebSocket connection
     final url =
-        'ws://192.168.27.1:8080/api/v1/supervisor/log-stream?container=$_serviceName';
+        'ws://$_baseUrl/api/v1/supervisor/log-stream?container=$_serviceName';
     _channel = WebSocketChannel.connect(Uri.parse(url));
 
     // Listen to the stream and update logs

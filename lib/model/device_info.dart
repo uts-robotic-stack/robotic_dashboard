@@ -19,6 +19,7 @@ class NetworkDevice {
 }
 
 class Device {
+  final String name;
   final String type;
   final int onDuration;
   final String lastOn;
@@ -27,6 +28,7 @@ class Device {
   final String fleet;
 
   Device({
+    required this.name,
     required this.type,
     required this.onDuration,
     required this.lastOn,
@@ -44,6 +46,9 @@ class Device {
           );
 
     return Device(
+      name: json['device_name'] == null
+          ? "robotic_default"
+          : json['device_name'] as String,
       type: json['device_type'],
       onDuration: json['on_duration'],
       lastOn: json['last_on'],

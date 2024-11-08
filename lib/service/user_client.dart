@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
@@ -10,6 +11,9 @@ class UserProvider with ChangeNotifier {
   String? get token => _token;
   bool _signedIn = false;
 
+  final String _baseUrl = dotenv.env['BASE_URL'] ??
+      const String.fromEnvironment("BASE_URL", defaultValue: "10.211.55.7");
+
   Future<void> signIn(String username, String password) async {
     if (_signedIn) {
       return;
@@ -17,7 +21,7 @@ class UserProvider with ChangeNotifier {
 
     try {
       final response = await http.post(
-        Uri.parse('http://192.168.27.1:8080/api/v1/signin'),
+        Uri.parse('http://$_baseUrl/api/v1/signin'),
         headers: <String, String>{
           'Content-Type': "application/json",
         },
@@ -49,7 +53,7 @@ class UserProvider with ChangeNotifier {
 
     try {
       final response = await http.get(
-        Uri.parse('http://192.168.27.1:8080/api/v1/signin/role'),
+        Uri.parse('http://$_baseUrl/api/v1/signin/role'),
         headers: <String, String>{
           'Authorization': _token!,
         },

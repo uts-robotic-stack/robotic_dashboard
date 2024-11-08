@@ -147,25 +147,40 @@ class _LogDetails extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return RichText(
-        text: TextSpan(children: [
+    return SelectableText.rich(
       TextSpan(
-          text: "$timestamp ",
-          style: const TextStyle(
-              fontFamily: 'Ubuntu Mono', fontSize: 13, color: Colors.white)),
-      TextSpan(
-          text: logType! + remainder!,
-          style: TextStyle(
+        children: [
+          TextSpan(
+            text: "$timestamp ",
+            style: const TextStyle(
               fontFamily: 'Ubuntu Mono',
               fontSize: 13,
-              color: logTypeColor(logType!))),
-      TextSpan(
-          text: content,
-          style: const TextStyle(
+              color: Colors.white,
+            ),
+          ),
+          TextSpan(
+            text: logType! + remainder!,
+            style: TextStyle(
+              fontFamily: 'Ubuntu Mono',
+              fontSize: 13,
+              color: logTypeColor(logType!),
+            ),
+          ),
+          TextSpan(
+            text: content,
+            style: const TextStyle(
               fontStyle: FontStyle.normal,
               fontFamily: 'Ubuntu Mono',
               fontSize: 13,
-              color: Colors.white)),
-    ]));
+              color: Colors.white,
+            ),
+          ),
+        ],
+      ),
+      // Optional cursor customization
+      showCursor: true,
+      cursorColor: Colors.white,
+      cursorWidth: 1.5,
+    );
   }
 }

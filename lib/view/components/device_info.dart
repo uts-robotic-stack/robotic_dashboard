@@ -114,7 +114,7 @@ class _DeviceInfoListState extends State<DeviceInfoList> {
 
   Future<void> _fetchData() async {
     final response = await http.get(
-      Uri.parse('http://192.168.27.1:8080/api/v1/device/info'),
+      Uri.parse('http://10.211.55.7:8080/api/v1/device/info'),
       headers: {
         'Authorization': 'Bearer robotics',
         "Content-Type":
@@ -141,10 +141,10 @@ class _DeviceInfoListState extends State<DeviceInfoList> {
                 '${networkDevice.deviceName}:',
                 style: const TextStyle(
                     fontFamily: 'Poppins',
-                    fontSize: 13,
+                    fontSize: 12,
                     fontStyle: FontStyle.normal,
                     fontWeight: FontWeight.w500,
-                    color: Colors.black),
+                    color: Color.fromARGB(255, 53, 53, 53)),
               );
             }).toList(),
           ),
@@ -156,7 +156,7 @@ class _DeviceInfoListState extends State<DeviceInfoList> {
                 networkDevice.ipAddress,
                 style: const TextStyle(
                     fontFamily: 'Poppins',
-                    fontSize: 13,
+                    fontSize: 12,
                     fontStyle: FontStyle.normal,
                     fontWeight: FontWeight.w500,
                     color: Colors.black),

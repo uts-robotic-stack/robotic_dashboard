@@ -26,33 +26,266 @@ class _ServiceItemState extends State<ServiceItem> {
   Future<void> _loadAndRunService(Service service) async {
     try {
       await widget.client.loadAndRunService(service);
-      setState(() {
-        // Update UI if necessary
-      });
+      bool pendingAlertClosed = false;
+      // Ensure the widget is still mounted before proceeding
+      if (mounted) {
+        // Show the loading dialog
+        showDialog(
+          context: context,
+          barrierDismissible: false, // Prevent closing the dialog manually
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('Pending',
+                  style:
+                      TextStyle(fontSize: 18.0, fontWeight: FontWeight.w500)),
+              content: const SizedBox(
+                width: 300,
+                height: 100,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    CircularProgressIndicator(),
+                    SizedBox(height: 20),
+                    Text("Service is starting... Please wait."),
+                  ],
+                ),
+              ),
+              actions: <Widget>[
+                TextButton(
+                  child: const Text('Cancel'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    pendingAlertClosed = true;
+                  },
+                ),
+              ],
+            );
+          },
+        );
+
+        // Poll the service status until it's no longer "off"
+        while (service.status == "off") {
+          await Future.delayed(
+              const Duration(milliseconds: 100)); // Poll every 2 seconds
+        }
+
+        // Close the loading dialog once the service status is no longer "off"
+        if (mounted && !pendingAlertClosed) {
+          Navigator.of(context).pop(); // Close the pending dialog
+        }
+      }
+      // Optionally, show a success message or update the UI
+      if (mounted) {
+        setState(() {});
+      }
     } catch (error) {
-      // Handle errors here
+      // Ensure the widget is still mounted before showing the dialog
+      if (mounted) {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return SizedBox(
+              width: 400,
+              height: 150,
+              child: AlertDialog(
+                title: const Text(
+                  'Error',
+                  style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w500),
+                ),
+                content: SizedBox(
+                  width: 400,
+                  child: Text(error.toString(),
+                      style: const TextStyle(fontSize: 14.0),
+                      softWrap: true,
+                      maxLines: 5,
+                      overflow: TextOverflow.ellipsis),
+                ),
+                actions: <Widget>[
+                  TextButton(
+                    child: const Text('OK'),
+                    onPressed: () {
+                      Navigator.of(context).pop(); // Close the dialog
+                    },
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      }
+      // Additional error handling can be done here if needed
     }
   }
 
   Future<void> _stopAndUnloadService(Service service) async {
     try {
       await widget.client.stopAndUnloadService(service);
-      setState(() {
-        widget.data.status = "off";
-      });
+      if (mounted) {
+        // Show loading dialog for 1 second
+        showDialog(
+          context: context,
+          barrierDismissible: false, // Prevent closing the dialog manually
+          builder: (BuildContext context) {
+            return const AlertDialog(
+              title: Text(
+                'Stopping Service',
+                style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w500),
+              ),
+              content: SizedBox(
+                width: 300,
+                height: 100,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    CircularProgressIndicator(),
+                    SizedBox(height: 20),
+                    Text("Service is shutting down... Please wait"),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+
+        // Close the dialog after 1 second
+        await Future.delayed(const Duration(milliseconds: 500));
+        if (mounted) {
+          Navigator.of(context).pop(); // Close the loading dialog
+        }
+      }
+
+      // Update the status after the dialog is closed
+      if (mounted) {
+        setState(() {
+          widget.data.status = "off";
+        });
+      }
     } catch (error) {
-      // Handle errors here
+      if (mounted) {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text(
+                'Error',
+                style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w500),
+              ),
+              content: SizedBox(
+                width: 300,
+                child: Text(
+                  error.toString(),
+                  style: const TextStyle(fontSize: 14.0),
+                  softWrap: true,
+                  maxLines: 5,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              actions: <Widget>[
+                TextButton(
+                  child: const Text('OK'),
+                  onPressed: () {
+                    Navigator.of(context).pop(); // Close the dialog
+                  },
+                ),
+              ],
+            );
+          },
+        );
+      }
     }
   }
 
   Future<void> _resetService(Service service) async {
     try {
       await widget.client.resetService(service);
-      setState(() {
-        // Update service status if necessary
-      });
+      bool pendingAlertClosed = false;
+      // Ensure the widget is still mounted before proceeding
+      if (mounted) {
+        // Show the loading dialog
+        showDialog(
+          context: context,
+          barrierDismissible: false, // Prevent closing the dialog manually
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('Pending',
+                  style:
+                      TextStyle(fontSize: 18.0, fontWeight: FontWeight.w500)),
+              content: const SizedBox(
+                width: 300,
+                height: 100,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    CircularProgressIndicator(),
+                    SizedBox(height: 20),
+                    Text("Service is restarting... Please wait."),
+                  ],
+                ),
+              ),
+              actions: <Widget>[
+                TextButton(
+                  child: const Text('Cancel'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    pendingAlertClosed = true;
+                  },
+                ),
+              ],
+            );
+          },
+        );
+
+        // Poll the service status until it's no longer "off"
+        while (service.status == "off") {
+          await Future.delayed(
+              const Duration(milliseconds: 100)); // Poll every 2 seconds
+        }
+
+        // Close the loading dialog once the service status is no longer "off"
+        if (mounted && !pendingAlertClosed) {
+          Navigator.of(context).pop(); // Close the pending dialog
+        }
+      }
+      // Optionally, show a success message or update the UI
+      if (mounted) {
+        setState(() {});
+      }
     } catch (error) {
-      // Handle errors here
+      // Ensure the widget is still mounted before showing the dialog
+      if (mounted) {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return SizedBox(
+              width: 400,
+              height: 150,
+              child: AlertDialog(
+                title: const Text(
+                  'Error',
+                  style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w500),
+                ),
+                content: SizedBox(
+                  width: 400,
+                  child: Text(error.toString(),
+                      style: const TextStyle(fontSize: 14.0),
+                      softWrap: true,
+                      maxLines: 5,
+                      overflow: TextOverflow.ellipsis),
+                ),
+                actions: <Widget>[
+                  TextButton(
+                    child: const Text('OK'),
+                    onPressed: () {
+                      Navigator.of(context).pop(); // Close the dialog
+                    },
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      }
+      // Additional error handling can be done here if needed
     }
   }
 
@@ -129,10 +362,9 @@ class _ServiceItemState extends State<ServiceItem> {
           padding: EdgeInsets.symmetric(horizontal: padding),
           child: IconButton(
             onPressed: () {
-              if (data.name == "robotic_supervisor") {
-                return;
+              if (data.status == "off") {
+                _loadAndRunService(data);
               }
-              _loadAndRunService(data);
             },
             icon: Icon(Icons.play_arrow, size: size),
           ),
@@ -141,9 +373,6 @@ class _ServiceItemState extends State<ServiceItem> {
           padding: EdgeInsets.symmetric(horizontal: padding),
           child: IconButton(
             onPressed: () {
-              if (data.name == "robotic_supervisor") {
-                return;
-              }
               _stopAndUnloadService(data);
             },
             icon: Icon(Icons.stop, size: size),
@@ -153,7 +382,7 @@ class _ServiceItemState extends State<ServiceItem> {
           padding: EdgeInsets.symmetric(horizontal: padding),
           child: IconButton(
             onPressed: () {
-              if (data.status != "off") _resetService(data);
+              _resetService(data);
             },
             icon: Icon(Icons.settings_backup_restore, size: size),
           ),
@@ -191,6 +420,32 @@ class _ServiceItemState extends State<ServiceItem> {
           in service.envVars?.entries ?? <MapEntry<String, String>>[])
         entry.key: TextEditingController(text: entry.value),
     };
+
+    bool settingsChanged = false; // Flag to track if text has changed
+
+    // Store the initial values to compare later
+    final Map<String, String> initialValues = {
+      for (var entry in envVarControllers.entries) entry.key: entry.value.text,
+    };
+
+    // Register listeners for each TextEditingController to detect and compare changes
+    envVarControllers.forEach((key, controller) {
+      controller.addListener(() {
+        final newText = controller.text;
+        final oldText = initialValues[key] ?? '';
+
+        // Compare the new text with the initial value
+        if (newText != oldText) {
+          settingsChanged = true;
+        } else {
+          // Reset flag if all controllers match their initial values
+          settingsChanged = envVarControllers.entries
+              .any((entry) => entry.value.text != initialValues[entry.key]);
+        }
+
+        // Optionally call setState or update the UI based on hasTextChanged
+      });
+    });
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -239,22 +494,65 @@ class _ServiceItemState extends State<ServiceItem> {
             ),
           ),
           actions: <Widget>[
-            if (isAdmin)
-              TextButton(
-                child: const Text(
-                  'Save',
-                  style: TextStyle(fontSize: 16.0),
-                ),
-                onPressed: () {
-                  setState(() {
-                    service.envVars = {
-                      for (var entry in envVarControllers.entries)
-                        entry.key: entry.value.text,
-                    };
-                  });
-                  Navigator.of(context).pop();
-                },
+            TextButton(
+              onPressed: () {
+                if (settingsChanged) {
+                  showDialog(
+                    context: context,
+                    barrierDismissible: false,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: const Text(
+                          'Saving Service Settings',
+                          style: TextStyle(
+                              fontSize: 18.0, fontWeight: FontWeight.w500),
+                        ),
+                        content: const SizedBox(
+                          width: 300,
+                          height: 100,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                  softWrap: true,
+                                  maxLines: 5,
+                                  style: TextStyle(fontSize: 14.0),
+                                  "Service will be restarted for the new settings to be applied. Do you wish to proceed ?"),
+                            ],
+                          ),
+                        ),
+                        actions: <Widget>[
+                          TextButton(
+                            child: const Text('Yes'),
+                            onPressed: () {
+                              setState(() {
+                                service.envVars = {
+                                  for (var entry in envVarControllers.entries)
+                                    entry.key: entry.value.text,
+                                };
+                              });
+                              Navigator.of(context).pop();
+                              Navigator.of(context).pop();
+                              _resetService(service);
+                            },
+                          ),
+                          TextButton(
+                            child: const Text('Cancel'),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                }
+              },
+              child: const Text(
+                'Save',
+                style: TextStyle(fontSize: 16.0),
               ),
+            ),
             TextButton(
               child: const Text(
                 'Close',
@@ -493,9 +791,12 @@ class ServiceSummaryItem extends StatelessWidget {
       ),
       Expanded(
         flex: 3,
-        child: Text(
-          value,
-          style: const TextStyle(fontSize: 16.0, fontWeight: FontWeight.w500),
+        child: Padding(
+          padding: const EdgeInsets.only(left: 8.0),
+          child: Text(
+            value,
+            style: const TextStyle(fontSize: 16.0, fontWeight: FontWeight.w500),
+          ),
         ),
       )
     ]);
