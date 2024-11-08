@@ -32,7 +32,7 @@ WORKDIR $APP
 # Run build: 1 - clean, 2 - pub get, 3 - build web
 RUN flutter clean
 RUN flutter pub get
-RUN flutter build web --release --dart-define=API_URL=https://192.168.27.1.com/api
+RUN flutter build web --dart-define=API_URL=https://192.168.27.1
 
 # once heare the app will be compiled and ready to deploy
 

@@ -1,3 +1,3 @@
 #!/bin/bash
 
-docker build . -f dockerfiles/Dockerfile.nginx -t dkhoanguyen/robotic_dashboard:latest  
+docker build . -f dockerfiles/Dockerfile.nginx-dev -t dkhoanguyen/robotic_dashboard:latest  
