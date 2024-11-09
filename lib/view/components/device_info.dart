@@ -92,7 +92,7 @@ class _DeviceInfoListState extends State<DeviceInfoList> {
             fontWeight: FontWeight.w500,
             color: Colors.black),
       ),
-      "subText": "Fleet"
+      "subText": "Serial devices"
     },
   ];
 
@@ -166,6 +166,11 @@ class _DeviceInfoListState extends State<DeviceInfoList> {
         ],
       );
 
+      Widget serialDevicesWidget = Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: device.serialDevices.map((device) => Text(device)).toList(),
+      );
+
       setState(() {
         items = [
           {
@@ -227,17 +232,9 @@ class _DeviceInfoListState extends State<DeviceInfoList> {
             "subText": "IP address"
           },
           {
-            "icon": Icons.cloud_done_outlined,
-            "mainText": SelectableText(
-              device.fleet,
-              style: const TextStyle(
-                  fontFamily: 'Poppins',
-                  fontSize: 13,
-                  fontStyle: FontStyle.normal,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.black),
-            ),
-            "subText": "Fleet"
+            "icon": Icons.cable,
+            "mainText": serialDevicesWidget,
+            "subText": "Serial devices"
           },
         ];
       });

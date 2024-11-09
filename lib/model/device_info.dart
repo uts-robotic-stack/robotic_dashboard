@@ -27,6 +27,7 @@ class Device {
   final Map<String, NetworkDevice> ipAddress;
   final String fleet;
   final String internetStatus;
+  final List<String> serialDevices;
 
   Device(
       {required this.name,
@@ -36,7 +37,8 @@ class Device {
       required this.softwareVersion,
       required this.ipAddress,
       required this.fleet,
-      required this.internetStatus});
+      required this.internetStatus,
+      required this.serialDevices});
 
   factory Device.fromJson(Map<String, dynamic> json) {
     // Check if `ip_address` is null, if so, set `ipMap` to an empty map
@@ -57,7 +59,11 @@ class Device {
         ipAddress: ipMap,
         fleet: json['fleet'],
         internetStatus:
-            _statusToMessage(_mapStatusCodeToEnum(json['internet_status'])));
+            _statusToMessage(_mapStatusCodeToEnum(json['internet_status'])),
+        serialDevices: (json['serial_devices'] as List<dynamic>?)
+                ?.map((item) => item as String)
+                .toList() ??
+            []);
   }
 }
 
