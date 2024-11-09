@@ -35,7 +35,7 @@ class _ServiceItemState extends State<ServiceItem> {
           barrierDismissible: false, // Prevent closing the dialog manually
           builder: (BuildContext context) {
             return AlertDialog(
-              title: const Text('Pending',
+              title: const Text('Starting service',
                   style:
                       TextStyle(fontSize: 18.0, fontWeight: FontWeight.w500)),
               content: const SizedBox(
@@ -128,7 +128,7 @@ class _ServiceItemState extends State<ServiceItem> {
           builder: (BuildContext context) {
             return const AlertDialog(
               title: Text(
-                'Stopping Service',
+                'Stopping service',
                 style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w500),
               ),
               content: SizedBox(
@@ -207,7 +207,7 @@ class _ServiceItemState extends State<ServiceItem> {
           barrierDismissible: false, // Prevent closing the dialog manually
           builder: (BuildContext context) {
             return AlertDialog(
-              title: const Text('Pending',
+              title: const Text('Starting service',
                   style:
                       TextStyle(fontSize: 18.0, fontWeight: FontWeight.w500)),
               content: const SizedBox(
@@ -446,6 +446,16 @@ class _ServiceItemState extends State<ServiceItem> {
         // Optionally call setState or update the UI based on hasTextChanged
       });
     });
+
+    TextEditingController commandController =
+        TextEditingController(text: service.getCommand());
+    final String initialCommand = service.getCommand();
+    commandController.addListener(() {
+      final newCommand = commandController.text;
+      if (newCommand != initialCommand) {
+        settingsChanged = true;
+      }
+    });
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -483,7 +493,8 @@ class _ServiceItemState extends State<ServiceItem> {
                   Expanded(
                     child: TabBarView(
                       children: [
-                        _buildSettingsTab(envVarControllers, service),
+                        _buildSettingsTab(
+                            envVarControllers, commandController, service),
                         _buildInformationTab(),
                         _buildFAQTab(),
                       ],
@@ -539,6 +550,11 @@ class _ServiceItemState extends State<ServiceItem> {
                           TextButton(
                             child: const Text('Cancel'),
                             onPressed: () {
+                              // reset text
+                              commandController.text = initialCommand;
+                              envVarControllers.forEach((key, controller) {
+                                controller.text = initialValues[key]!;
+                              });
                               Navigator.of(context).pop();
                             },
                           ),
@@ -568,15 +584,16 @@ class _ServiceItemState extends State<ServiceItem> {
     );
   }
 
-  Widget _buildSettingsTab(
-      Map<String, TextEditingController> envVarControllers, Service service) {
+  Widget _buildSettingsTab(Map<String, TextEditingController> envVarControllers,
+      TextEditingController commandController, Service service) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: defaultPadding),
       child: SingleChildScrollView(
         child: ListBody(
           children: <Widget>[
             if (isAdmin)
-              ..._buildAdminSettings(envVarControllers, widget.data)
+              ..._buildAdminSettings(
+                  envVarControllers, commandController, widget.data)
             else
               ..._buildUserSettings(service),
           ],
@@ -586,7 +603,9 @@ class _ServiceItemState extends State<ServiceItem> {
   }
 
   List<Widget> _buildAdminSettings(
-      Map<String, TextEditingController> envVarControllers, Service data) {
+      Map<String, TextEditingController> envVarControllers,
+      TextEditingController commandController,
+      Service data) {
     return [
       const Padding(
         padding: EdgeInsets.only(top: 16.0, bottom: 16.0),
@@ -599,7 +618,7 @@ class _ServiceItemState extends State<ServiceItem> {
       const SizedBox(height: 16.0),
       ServiceSummaryItem(field: "Status", value: data.status ?? "off"),
       const SizedBox(height: 16.0),
-      ServiceSummaryItem(field: "Software version", value: data.image),
+      ServiceSummaryItem(field: "Software version", value: data.image.id ?? ""),
       const SizedBox(height: 16.0),
       const Divider(), // Horizontal line // Add spacing between envVars and static texts
       const SizedBox(height: 16.0),
@@ -638,6 +657,26 @@ class _ServiceItemState extends State<ServiceItem> {
                 ],
               ))
           .toList(),
+      const SizedBox(height: 4.0),
+      Row(children: [
+        const Expanded(
+          flex: 1,
+          child: Text(
+            "COMMAND: ",
+            style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+          ),
+        ),
+        Expanded(
+          flex: 3,
+          child: Padding(
+            padding: const EdgeInsets.only(left: 8.0),
+            child: TextFormField(
+              controller: commandController,
+              showCursor: true,
+            ),
+          ),
+        )
+      ]),
       const SizedBox(height: 8.0),
       Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
         const Expanded(

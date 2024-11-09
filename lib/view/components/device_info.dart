@@ -30,7 +30,7 @@ class _DeviceInfoListState extends State<DeviceInfoList> {
       "subText": "Type"
     },
     {
-      "icon": Icons.calendar_today,
+      "icon": Icons.wifi,
       "mainText": const SelectableText(
         "Loading",
         style: TextStyle(
@@ -40,7 +40,7 @@ class _DeviceInfoListState extends State<DeviceInfoList> {
             fontWeight: FontWeight.w500,
             color: Colors.black),
       ),
-      "subText": "Last on"
+      "subText": "Internet status"
     },
     {
       "icon": Icons.watch_later_outlined,
@@ -182,9 +182,9 @@ class _DeviceInfoListState extends State<DeviceInfoList> {
             "subText": "Type"
           },
           {
-            "icon": Icons.calendar_today,
+            "icon": Icons.wifi,
             "mainText": SelectableText(
-              formatDate(device.lastOn),
+              device.internetStatus,
               style: const TextStyle(
                   fontFamily: 'Poppins',
                   fontSize: 13,
@@ -192,7 +192,7 @@ class _DeviceInfoListState extends State<DeviceInfoList> {
                   fontWeight: FontWeight.w500,
                   color: Colors.black),
             ),
-            "subText": "Last on"
+            "subText": "Internet status"
           },
           {
             "icon": Icons.watch_later_outlined,

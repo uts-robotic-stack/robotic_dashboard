@@ -4,7 +4,7 @@ import 'package:robotic_dashboard/model/docker/resource.dart';
 import 'package:robotic_dashboard/model/docker/volume.dart';
 
 class Service {
-  final String image;
+  final Image image;
   final String action;
   final String name;
   final List<String> command;
@@ -54,7 +54,7 @@ class Service {
     }
 
     return Service(
-      image: json['image'] as String? ?? '', // Default empty string if null
+      image: Image.fromJson(json['image']), // Default empty string if null
       action: json['action'] as String? ?? '', // Default empty string if null
       name: json['name'] as String? ?? '', // Default empty string if null
       command: (json['command'] as List<dynamic>?)
@@ -89,7 +89,7 @@ class Service {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    data['image'] = image;
+    data['image'] = image.toJson();
     data['action'] = action;
     data['name'] = name;
     data['command'] = command;
@@ -109,6 +109,31 @@ class Service {
     }
     if (resources != null) data['resources'] = resources!.toJson();
     if (sysctls != null) data['sysctls'] = sysctls;
+    return data;
+  }
+
+  String getCommand() {
+    return command.join(" ");
+  }
+}
+
+class Image {
+  final String name;
+  String? id;
+
+  Image({
+    required this.name,
+    this.id,
+  });
+
+  factory Image.fromJson(Map<String, dynamic> json) {
+    return Image(name: json["name"], id: json["id"]);
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['name'] = name;
+    data['id'] = id;
     return data;
   }
 }
