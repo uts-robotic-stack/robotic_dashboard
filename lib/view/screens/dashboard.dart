@@ -3,7 +3,9 @@ import 'package:provider/provider.dart';
 import 'package:robotic_dashboard/responsive/responsive.dart';
 import 'package:robotic_dashboard/service/device_http_client.dart';
 import 'package:robotic_dashboard/service/device_provider.dart';
+import 'package:robotic_dashboard/service/user_client.dart';
 import 'package:robotic_dashboard/utils/constants.dart';
+import 'package:robotic_dashboard/utils/warning_dialog.dart';
 import 'package:robotic_dashboard/view/components/device_info.dart';
 import 'package:robotic_dashboard/view/components/header.dart';
 import 'package:robotic_dashboard/view/components/log_viewer.dart';
@@ -63,6 +65,7 @@ class _DeviceInfoState extends State<DeviceInfo> {
   @override
   Widget build(BuildContext context) {
     final device = Provider.of<DeviceProvider>(context).device;
+    final userProvider = Provider.of<UserProvider>(context);
     return Padding(
       padding: const EdgeInsets.all(defaultPadding),
       child: SizedBox(
@@ -100,12 +103,21 @@ class _DeviceInfoState extends State<DeviceInfo> {
                       DropdownItem(
                         text: 'Update',
                         icon: Icons.update,
-                        onSelected: () {},
+                        onSelected: () {
+                          if (!userProvider.isSignedIn) {
+                            showNotSignInWarning(context);
+                            return;
+                          }
+                        },
                       ),
                       DropdownItem(
                         text: 'Shutdown',
                         icon: Icons.logout,
                         onSelected: () {
+                          if (!userProvider.isSignedIn) {
+                            showNotSignInWarning(context);
+                            return;
+                          }
                           _statusColor = Colors.red;
                           setState(() {});
                           _deviceHttpClient.shutdownDevice();
@@ -115,6 +127,10 @@ class _DeviceInfoState extends State<DeviceInfo> {
                         text: 'Reboot',
                         icon: Icons.restart_alt,
                         onSelected: () {
+                          if (!userProvider.isSignedIn) {
+                            showNotSignInWarning(context);
+                            return;
+                          }
                           _statusColor = Colors.red;
                           setState(() {});
                           _deviceHttpClient.restartDevice();
@@ -146,40 +162,13 @@ class ControllerDashboard extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: defaultPadding),
         child: Container(
-          padding: const EdgeInsets.all(defaultPadding),
-          decoration: BoxDecoration(
-              color: secondaryColor,
-              borderRadius: const BorderRadius.all(Radius.circular(10)),
-              border:
-                  Border.all(color: const Color.fromARGB(255, 193, 193, 193))),
-          child: const Column(
-            children: [
-              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                Padding(
-                  padding: EdgeInsets.only(top: 8.0, bottom: 8.0, left: 8.0),
-                  child: Text(
-                    "Services",
-                    style: TextStyle(color: Colors.black, fontSize: 14.0),
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: defaultPadding / 2),
-                  child: Row(
-                    children: [],
-                  ),
-                ),
-              ]),
-              // SizedBox(
-              //   height: defaultPadding,
-              // ),
-              Padding(
-                padding: EdgeInsets.only(top: 6.0),
-                child: Divider(),
-              ),
-              Expanded(child: ServiceManager()),
-            ],
-          ),
-        ),
+            padding: const EdgeInsets.all(defaultPadding),
+            decoration: BoxDecoration(
+                color: secondaryColor,
+                borderRadius: const BorderRadius.all(Radius.circular(10)),
+                border: Border.all(
+                    color: const Color.fromARGB(255, 193, 193, 193))),
+            child: const ServiceManager()),
       ),
     );
   }

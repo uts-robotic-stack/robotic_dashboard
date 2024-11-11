@@ -6,10 +6,13 @@ import 'package:http/http.dart' as http;
 class UserProvider with ChangeNotifier {
   bool _isAdmin = false;
   bool get isAdmin => _isAdmin;
+  bool _isMaintainer = false;
+  bool get isMaintainer => _isMaintainer;
 
   String? _token; // Store JWT token for authenticated requests
   String? get token => _token;
   bool _signedIn = false;
+  bool get isSignedIn => _signedIn;
 
   final String _baseUrl = dotenv.env['BASE_URL'] ??
       const String.fromEnvironment("BASE_URL",
@@ -34,11 +37,20 @@ class UserProvider with ChangeNotifier {
 
       if (response.statusCode == 200) {
         final responseData = jsonDecode(response.body);
-        _token = responseData['token'];
-        _signedIn = true;
 
-        // Fetch the user's role using the token
-        await _fetchUserRole();
+        // Check if the token is provided in the response
+        if (responseData.containsKey('token')) {
+          _token = responseData['token'];
+          _signedIn = true;
+          // Fetch the user's role using the token
+          await _fetchUserRole();
+        } else {
+          // If no token is provided, assume the user is a regular user
+          _token = null;
+          _signedIn = true;
+          _isMaintainer = false;
+          _isAdmin = false;
+        }
 
         notifyListeners();
       } else {
@@ -62,13 +74,11 @@ class UserProvider with ChangeNotifier {
 
       if (response.statusCode == 200) {
         final responseData = jsonDecode(response.body);
-        if (responseData['role'] == 'admin') {
-          _isAdmin = true;
-        } else {
-          _isAdmin = false;
-        }
+        _isAdmin = responseData['role'] == 'admin';
+        _isMaintainer = responseData['role'] == 'maintainer';
       } else {
         _isAdmin = false;
+        _isMaintainer = false;
         throw Exception('Failed to fetch user role: ${response.reasonPhrase}');
       }
     } catch (error) {
@@ -76,9 +86,11 @@ class UserProvider with ChangeNotifier {
     }
   }
 
+  // Sign out method to clear the user's session
   void signOut() {
     _isAdmin = false;
     _token = null;
+    _signedIn = false;
     notifyListeners();
   }
 }

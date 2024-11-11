@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:robotic_dashboard/service/service_http_client.dart';
 import 'package:robotic_dashboard/service/service_log_ws_client.dart';
+import 'package:robotic_dashboard/service/user_client.dart';
+import 'package:robotic_dashboard/utils/warning_dialog.dart';
 import 'package:robotic_dashboard/view/widgets/adaptive_switch.dart';
 import 'package:robotic_dashboard/view/widgets/pdf_downloader.dart';
 import 'package:robotic_dashboard/responsive/responsive.dart';
@@ -357,12 +359,17 @@ class _ServiceItemState extends State<ServiceItem> {
     }
 
     final logsProvider = Provider.of<ServiceLogsWSClient>(context);
+    final userProvider = Provider.of<UserProvider>(context);
     return Row(
       children: [
         Padding(
           padding: EdgeInsets.symmetric(horizontal: padding),
           child: IconButton(
             onPressed: () {
+              if (!userProvider.isSignedIn) {
+                showNotSignInWarning(context);
+                return;
+              }
               if (data.status == "off") {
                 _loadAndRunService(data);
               }
@@ -374,6 +381,10 @@ class _ServiceItemState extends State<ServiceItem> {
           padding: EdgeInsets.symmetric(horizontal: padding),
           child: IconButton(
             onPressed: () {
+              if (!userProvider.isSignedIn) {
+                showNotSignInWarning(context);
+                return;
+              }
               _stopAndUnloadService(data);
             },
             icon: Icon(Icons.stop, size: size),
@@ -383,6 +394,10 @@ class _ServiceItemState extends State<ServiceItem> {
           padding: EdgeInsets.symmetric(horizontal: padding),
           child: IconButton(
             onPressed: () {
+              if (!userProvider.isSignedIn) {
+                showNotSignInWarning(context);
+                return;
+              }
               _resetService(data);
             },
             icon: Icon(Icons.settings_backup_restore, size: size),
@@ -406,6 +421,10 @@ class _ServiceItemState extends State<ServiceItem> {
           padding: EdgeInsets.symmetric(horizontal: padding),
           child: IconButton(
             onPressed: () {
+              if (!userProvider.isSignedIn) {
+                showNotSignInWarning(context);
+                return;
+              }
               _showServiceSettings(data);
             },
             icon: Icon(Icons.settings, size: size),
@@ -699,10 +718,8 @@ class _ServiceItemState extends State<ServiceItem> {
             follow: _defaultAutoUpdate,
             scale: 0.8,
             onChanged: (value) {
-              if (!isAdmin) {
-                return;
-              }
               _defaultAutoUpdate = value;
+              setState(() {});
             },
           ),
         )
@@ -728,10 +745,8 @@ class _ServiceItemState extends State<ServiceItem> {
             follow: _defaultAutoRestart,
             scale: 0.8,
             onChanged: (value) {
-              if (!isAdmin) {
-                return;
-              }
               _defaultAutoRestart = value;
+              setState(() {});
             },
           ),
         )
