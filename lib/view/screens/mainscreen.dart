@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:robotic_dashboard/service/navigation_provider.dart';
 import 'package:robotic_dashboard/view/screens/dashboard.dart';
+import 'package:robotic_dashboard/view/screens/fleet_management.dart';
 import 'package:robotic_dashboard/view/screens/settings.dart';
 import 'package:robotic_dashboard/view/screens/side_menu.dart';
 import 'package:robotic_dashboard/view/screens/statistic.dart';
@@ -19,6 +20,7 @@ class _MainScreenState extends State<MainScreen> {
     'dashboard': Dashboard(),
     'stats': StatisticScreen(),
     'settings': SettingsScreen(),
+    'fleet': FleetManagement()
   };
   @override
   Widget build(BuildContext context) {

@@ -40,6 +40,24 @@ class Device {
       required this.internetStatus,
       required this.serialDevices});
 
+  // Factory constructor to create a loading state Device
+  factory Device.init() {
+    return Device(
+      name: "Loading...",
+      type: "Loading...",
+      onDuration: 0,
+      lastOn: "Loading...",
+      softwareVersion: "Loading...",
+      ipAddress: {
+        "Loading...":
+            NetworkDevice(deviceName: "", deviceType: "", ipAddress: "")
+      },
+      fleet: "Loading...",
+      internetStatus: "Loading...",
+      serialDevices: ["Loading..."],
+    );
+  }
+
   factory Device.fromJson(Map<String, dynamic> json) {
     // Check if `ip_address` is null, if so, set `ipMap` to an empty map
     Map<String, NetworkDevice> ipMap = json['ip_address'] == null
@@ -64,6 +82,13 @@ class Device {
                 ?.map((item) => item as String)
                 .toList() ??
             []);
+  }
+
+  String getSupervisorVersion() {
+    if (softwareVersion == "Loading...") {
+      return softwareVersion;
+    }
+    return softwareVersion.substring("sha256:".length, "sha256:".length + 8);
   }
 }
 

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:robotic_dashboard/responsive/responsive.dart';
 import 'package:robotic_dashboard/service/device_http_client.dart';
+import 'package:robotic_dashboard/service/device_provider.dart';
 import 'package:robotic_dashboard/utils/constants.dart';
 import 'package:robotic_dashboard/view/components/device_info.dart';
 import 'package:robotic_dashboard/view/components/header.dart';
@@ -60,6 +62,7 @@ class _DeviceInfoState extends State<DeviceInfo> {
 
   @override
   Widget build(BuildContext context) {
+    final device = Provider.of<DeviceProvider>(context).device;
     return Padding(
       padding: const EdgeInsets.all(defaultPadding),
       child: SizedBox(
@@ -80,9 +83,9 @@ class _DeviceInfoState extends State<DeviceInfo> {
                 children: [
                   Row(
                     children: [
-                      const Text(
-                        "robotics_default",
-                        style: TextStyle(fontSize: 18),
+                      Text(
+                        device.name,
+                        style: const TextStyle(fontSize: 18),
                       ),
                       Padding(
                         padding: const EdgeInsets.only(left: 8.0),
@@ -124,7 +127,7 @@ class _DeviceInfoState extends State<DeviceInfo> {
             ),
             const Divider(),
             const SizedBox(height: 8.0),
-            const Expanded(child: DeviceInfoList())
+            Expanded(child: DeviceInfoList())
           ]),
         ),
       ),

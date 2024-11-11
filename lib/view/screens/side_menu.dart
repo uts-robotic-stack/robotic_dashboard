@@ -115,7 +115,9 @@ class _SideMenuState extends State<SideMenu> {
           Padding(
               padding: const EdgeInsets.all(2.0),
               child: IconButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    _showLoginDialog();
+                  },
                   icon: const Icon(Icons.dashboard_rounded,
                       size: 40.0, color: Colors.white))),
           Expanded(
@@ -124,9 +126,10 @@ class _SideMenuState extends State<SideMenu> {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: IconButton(
-                    icon: const Icon(Icons.people_alt, color: Colors.white),
+                    icon: const Icon(Icons.account_tree_rounded,
+                        color: Colors.white),
                     onPressed: () {
-                      _showLoginDialog();
+                      context.read<NavigationProvider>().setPage('fleet');
                     },
                   ),
                 ),

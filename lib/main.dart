@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
+import 'package:robotic_dashboard/service/device_provider.dart';
 import 'package:robotic_dashboard/service/navigation_provider.dart';
 import 'package:robotic_dashboard/service/user_client.dart';
 import 'package:robotic_dashboard/service/service_log_ws_client.dart';
@@ -13,7 +14,8 @@ void main() async {
   runApp(MultiProvider(providers: [
     ChangeNotifierProvider(create: (_) => ServiceLogsWSClient()),
     ChangeNotifierProvider(create: (_) => UserProvider()),
-    ChangeNotifierProvider(create: (_) => NavigationProvider())
+    ChangeNotifierProvider(create: (_) => NavigationProvider()),
+    ChangeNotifierProvider(create: (_) => DeviceProvider())
   ], child: const RoboticsDashboard()));
 }
 

@@ -6,7 +6,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 class ServiceHttpClient {
   final String _baseUrl = dotenv.env['BASE_URL'] ??
       const String.fromEnvironment("BASE_URL",
-          defaultValue: "10.211.55.7:8080");
+          defaultValue: "192.168.27.1:8080");
   static const Map<String, String> _headers = {
     'Authorization': 'Bearer robotics',
     'Content-Type': 'application/json',

@@ -6,7 +6,8 @@ import 'package:web_socket_channel/status.dart' as status;
 // Define a ChangeNotifier class to manage state
 class ServiceLogsWSClient with ChangeNotifier {
   final String _baseUrl = dotenv.env['BASE_URL'] ??
-      const String.fromEnvironment("BASE_URL", defaultValue: "10.211.55.7");
+      const String.fromEnvironment("BASE_URL",
+          defaultValue: "192.168.27.1:8080");
   String _serviceName = "robotic_supervisor";
   WebSocketChannel? _channel;
   final List<String> _logs = [];

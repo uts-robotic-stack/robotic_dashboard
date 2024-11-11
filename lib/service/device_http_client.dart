@@ -5,7 +5,8 @@ import 'package:robotic_dashboard/model/device_info.dart';
 
 class DeviceHttpClient {
   final String _baseUrl = dotenv.env['BASE_URL'] ??
-      const String.fromEnvironment("BASE_URL", defaultValue: "10.211.55.7");
+      const String.fromEnvironment("BASE_URL",
+          defaultValue: "192.168.27.1:8080");
   static const Map<String, String> _headers = {
     'Authorization': 'Bearer robotics',
     'Content-Type': 'application/json',

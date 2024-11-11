@@ -12,7 +12,8 @@ class UserProvider with ChangeNotifier {
   bool _signedIn = false;
 
   final String _baseUrl = dotenv.env['BASE_URL'] ??
-      const String.fromEnvironment("BASE_URL", defaultValue: "10.211.55.7");
+      const String.fromEnvironment("BASE_URL",
+          defaultValue: "192.168.27.1:8080");
 
   Future<void> signIn(String username, String password) async {
     if (_signedIn) {

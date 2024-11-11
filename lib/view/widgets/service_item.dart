@@ -22,6 +22,7 @@ class ServiceItem extends StatefulWidget {
 class _ServiceItemState extends State<ServiceItem> {
   final bool isAdmin = true;
   bool _defaultAutoUpdate = true;
+  bool _defaultAutoRestart = true;
 
   Future<void> _loadAndRunService(Service service) async {
     try {
@@ -724,13 +725,13 @@ class _ServiceItemState extends State<ServiceItem> {
         Expanded(
           flex: 3,
           child: AdaptiveSwitch(
-            follow: _defaultAutoUpdate,
+            follow: _defaultAutoRestart,
             scale: 0.8,
             onChanged: (value) {
               if (!isAdmin) {
                 return;
               }
-              _defaultAutoUpdate = value;
+              _defaultAutoRestart = value;
             },
           ),
         )

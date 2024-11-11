@@ -1,20 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
-import 'dart:async';
-
+import 'package:provider/provider.dart';
 import 'package:robotic_dashboard/model/device_info.dart';
+import 'package:robotic_dashboard/service/device_provider.dart';
 import 'package:robotic_dashboard/utils/common_utils.dart';
 
-class DeviceInfoList extends StatefulWidget {
-  const DeviceInfoList({Key? key}) : super(key: key);
-
-  @override
-  // ignore: library_private_types_in_public_api
-  _DeviceInfoListState createState() => _DeviceInfoListState();
-}
-
-class _DeviceInfoListState extends State<DeviceInfoList> {
+// ignore: must_be_immutable
+class DeviceInfoList extends StatelessWidget {
+  DeviceInfoList({Key? key}) : super(key: key);
   List<Map<String, dynamic>> items = [
     {
       "icon": Icons.computer,
@@ -96,157 +88,131 @@ class _DeviceInfoListState extends State<DeviceInfoList> {
     },
   ];
 
-  Timer? _timer;
-  final Duration _refreshDuration = const Duration(seconds: 1);
-
   @override
-  void initState() {
-    super.initState();
-    _fetchData();
-    _startPeriodicFetch();
-  }
-
-  @override
-  void dispose() {
-    _timer?.cancel();
-    super.dispose();
-  }
-
-  Future<void> _fetchData() async {
-    final response = await http.get(
-      Uri.parse('http://10.211.55.7:8080/api/v1/device/info'),
-      headers: {
-        'Authorization': 'Bearer robotics',
-        "Content-Type":
-            "application/json" // Include your access token or any other headers
-      },
+  Widget build(BuildContext context) {
+    final device = Provider.of<DeviceProvider>(context).device;
+    Map<String, NetworkDevice> networkDevices = Map.from(device.ipAddress);
+    networkDevices.removeWhere((key, networkDevice) =>
+        !(networkDevice.deviceName.contains('wlan') ||
+            networkDevice.deviceName.contains('eth') ||
+            networkDevice.deviceName.contains('enp')));
+    networkDevices.removeWhere(
+        (key, networkDevice) => (networkDevice.deviceName.contains('veth')));
+    Widget networkDeviceWidget = Row(
+      children: [
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: networkDevices.entries.map((entry) {
+            final networkDevice = entry.value;
+            return SelectableText(
+              '${networkDevice.deviceName}:',
+              style: const TextStyle(
+                  fontFamily: 'Poppins',
+                  fontSize: 12,
+                  fontStyle: FontStyle.normal,
+                  fontWeight: FontWeight.w500,
+                  color: Color.fromARGB(255, 53, 53, 53)),
+            );
+          }).toList(),
+        ),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: networkDevices.entries.map((entry) {
+            final networkDevice = entry.value;
+            return SelectableText(
+              networkDevice.ipAddress,
+              style: const TextStyle(
+                  fontFamily: 'Poppins',
+                  fontSize: 12,
+                  fontStyle: FontStyle.normal,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.black),
+            );
+          }).toList(),
+        ),
+      ],
     );
 
-    if (response.statusCode == 200) {
-      final device = Device.fromJson(json.decode(response.body));
-      Map<String, NetworkDevice> devices = Map.from(device.ipAddress);
-      devices.removeWhere((key, networkDevice) =>
-          !(networkDevice.deviceName.contains('wlan') ||
-              networkDevice.deviceName.contains('eth') ||
-              networkDevice.deviceName.contains('enp')));
-      devices.removeWhere(
-          (key, networkDevice) => (networkDevice.deviceName.contains('veth')));
-      Widget ipAddressWidget = Row(
-        children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: devices.entries.map((entry) {
-              final networkDevice = entry.value;
-              return SelectableText(
-                '${networkDevice.deviceName}:',
+    Widget serialDevicesWidget = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: device.serialDevices
+          .map((device) => SelectableText(
+                device,
                 style: const TextStyle(
                     fontFamily: 'Poppins',
-                    fontSize: 12,
-                    fontStyle: FontStyle.normal,
-                    fontWeight: FontWeight.w500,
-                    color: Color.fromARGB(255, 53, 53, 53)),
-              );
-            }).toList(),
-          ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: devices.entries.map((entry) {
-              final networkDevice = entry.value;
-              return SelectableText(
-                networkDevice.ipAddress,
-                style: const TextStyle(
-                    fontFamily: 'Poppins',
-                    fontSize: 12,
+                    fontSize: 13,
                     fontStyle: FontStyle.normal,
                     fontWeight: FontWeight.w500,
                     color: Colors.black),
-              );
-            }).toList(),
-          ),
-        ],
-      );
+              ))
+          .toList(),
+    );
 
-      Widget serialDevicesWidget = Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: device.serialDevices.map((device) => Text(device)).toList(),
-      );
+    items = [
+      {
+        "icon": Icons.computer,
+        "mainText": SelectableText(
+          device.type,
+          style: const TextStyle(
+              fontFamily: 'Poppins',
+              fontSize: 13,
+              fontStyle: FontStyle.normal,
+              fontWeight: FontWeight.w500,
+              color: Colors.black),
+        ),
+        "subText": "Type"
+      },
+      {
+        "icon": Icons.wifi,
+        "mainText": SelectableText(
+          device.internetStatus,
+          style: const TextStyle(
+              fontFamily: 'Poppins',
+              fontSize: 13,
+              fontStyle: FontStyle.normal,
+              fontWeight: FontWeight.w500,
+              color: Colors.black),
+        ),
+        "subText": "Internet status"
+      },
+      {
+        "icon": Icons.watch_later_outlined,
+        "mainText": SelectableText(
+          formatDuration(device.onDuration),
+          style: const TextStyle(
+              fontFamily: 'Poppins',
+              fontSize: 13,
+              fontStyle: FontStyle.normal,
+              fontWeight: FontWeight.w500,
+              color: Colors.black),
+        ),
+        "subText": "On duration"
+      },
+      {
+        "icon": Icons.collections_bookmark_outlined,
+        "mainText": SelectableText(
+          device.getSupervisorVersion(),
+          style: const TextStyle(
+              fontFamily: 'Poppins',
+              fontSize: 13,
+              fontStyle: FontStyle.normal,
+              fontWeight: FontWeight.w500,
+              color: Colors.black),
+        ),
+        "subText": "Software version"
+      },
+      {
+        "icon": Icons.settings_ethernet,
+        "mainText": networkDeviceWidget,
+        "subText": "IP address"
+      },
+      {
+        "icon": Icons.cable,
+        "mainText": serialDevicesWidget,
+        "subText": "Serial devices"
+      },
+    ];
 
-      setState(() {
-        items = [
-          {
-            "icon": Icons.computer,
-            "mainText": SelectableText(
-              device.type,
-              style: const TextStyle(
-                  fontFamily: 'Poppins',
-                  fontSize: 13,
-                  fontStyle: FontStyle.normal,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.black),
-            ),
-            "subText": "Type"
-          },
-          {
-            "icon": Icons.wifi,
-            "mainText": SelectableText(
-              device.internetStatus,
-              style: const TextStyle(
-                  fontFamily: 'Poppins',
-                  fontSize: 13,
-                  fontStyle: FontStyle.normal,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.black),
-            ),
-            "subText": "Internet status"
-          },
-          {
-            "icon": Icons.watch_later_outlined,
-            "mainText": SelectableText(
-              formatDuration(device.onDuration),
-              style: const TextStyle(
-                  fontFamily: 'Poppins',
-                  fontSize: 13,
-                  fontStyle: FontStyle.normal,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.black),
-            ),
-            "subText": "On duration"
-          },
-          {
-            "icon": Icons.collections_bookmark_outlined,
-            "mainText": SelectableText(
-              device.softwareVersion
-                  .substring("sha256:".length, "sha256:".length + 8),
-              style: const TextStyle(
-                  fontFamily: 'Poppins',
-                  fontSize: 13,
-                  fontStyle: FontStyle.normal,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.black),
-            ),
-            "subText": "Software version"
-          },
-          {
-            "icon": Icons.settings_ethernet,
-            "mainText": ipAddressWidget,
-            "subText": "IP address"
-          },
-          {
-            "icon": Icons.cable,
-            "mainText": serialDevicesWidget,
-            "subText": "Serial devices"
-          },
-        ];
-      });
-    } else {}
-  }
-
-  void _startPeriodicFetch() {
-    _timer = Timer.periodic(_refreshDuration, (Timer t) => _fetchData());
-  }
-
-  @override
-  Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
         int crossAxisCount = constraints.maxWidth < 600 ? 1 : 2;
