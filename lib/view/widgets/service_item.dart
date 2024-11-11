@@ -421,10 +421,6 @@ class _ServiceItemState extends State<ServiceItem> {
           padding: EdgeInsets.symmetric(horizontal: padding),
           child: IconButton(
             onPressed: () {
-              if (!userProvider.isSignedIn) {
-                showNotSignInWarning(context);
-                return;
-              }
               _showServiceSettings(data);
             },
             icon: Icon(Icons.settings, size: size),
@@ -586,13 +582,11 @@ class _ServiceItemState extends State<ServiceItem> {
               },
               child: const Text(
                 'Save',
-                style: TextStyle(fontSize: 16.0),
               ),
             ),
             TextButton(
               child: const Text(
                 'Close',
-                style: TextStyle(fontSize: 16.0),
               ),
               onPressed: () {
                 Navigator.of(context).pop();
@@ -610,19 +604,13 @@ class _ServiceItemState extends State<ServiceItem> {
       padding: const EdgeInsets.symmetric(horizontal: defaultPadding),
       child: SingleChildScrollView(
         child: ListBody(
-          children: <Widget>[
-            if (isAdmin)
-              ..._buildAdminSettings(
-                  envVarControllers, commandController, widget.data)
-            else
-              ..._buildUserSettings(service),
-          ],
-        ),
+            children: _buildServiceSettings(
+                envVarControllers, commandController, widget.data)),
       ),
     );
   }
 
-  List<Widget> _buildAdminSettings(
+  List<Widget> _buildServiceSettings(
       Map<String, TextEditingController> envVarControllers,
       TextEditingController commandController,
       Service data) {
@@ -639,7 +627,7 @@ class _ServiceItemState extends State<ServiceItem> {
                   child: Text(
                     'Summary',
                     style:
-                        TextStyle(fontSize: 18.0, fontWeight: FontWeight.w500),
+                        TextStyle(fontSize: 16.0, fontWeight: FontWeight.w500),
                   ),
                 ),
                 ServiceSummaryItem(field: "Name", value: data.name),
@@ -684,7 +672,7 @@ class _ServiceItemState extends State<ServiceItem> {
       const SizedBox(height: 16.0),
       const Text(
         'Settings',
-        style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w500),
+        style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.w500),
       ),
       const SizedBox(height: 8.0),
       ...envVarControllers.entries
@@ -692,23 +680,16 @@ class _ServiceItemState extends State<ServiceItem> {
                 children: [
                   Expanded(
                     flex: 1,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const SizedBox(
-                          height: 5,
-                        ),
-                        Text(entry.key,
-                            style: const TextStyle(
-                                fontWeight: FontWeight.w600, fontSize: 14.0)),
-                      ],
-                    ),
+                    child: Text(entry.key,
+                        style: const TextStyle(
+                            fontWeight: FontWeight.w600, fontSize: 14.0)),
                   ),
                   Expanded(
                     flex: 3,
                     child: Padding(
                       padding: const EdgeInsets.only(left: 8.0),
                       child: TextFormField(
+                        style: const TextStyle(fontSize: 14.0),
                         controller: entry.value,
                         showCursor: true,
                       ),
@@ -717,7 +698,7 @@ class _ServiceItemState extends State<ServiceItem> {
                 ],
               ))
           .toList(),
-      const SizedBox(height: 4.0),
+      const SizedBox(height: 2.0),
       Row(children: [
         const Expanded(
           flex: 1,
@@ -731,9 +712,9 @@ class _ServiceItemState extends State<ServiceItem> {
           child: Padding(
             padding: const EdgeInsets.only(left: 8.0),
             child: TextFormField(
-              controller: commandController,
-              showCursor: true,
-            ),
+                style: const TextStyle(fontSize: 14.0),
+                controller: commandController,
+                showCursor: true),
           ),
         )
       ]),
@@ -794,38 +775,6 @@ class _ServiceItemState extends State<ServiceItem> {
     ];
   }
 
-  List<Widget> _buildUserSettings(Service service) {
-    return service.envVars!.entries
-        .map((entry) => Column(
-              children: [
-                Row(
-                  children: [
-                    Expanded(
-                      flex: 1,
-                      child: Text('${entry.key}:',
-                          style: const TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 16.0)),
-                    ),
-                    Expanded(
-                      flex: 2,
-                      child: Padding(
-                        padding: const EdgeInsets.only(left: 8.0),
-                        child: SelectableText(
-                          entry.value,
-                          style: const TextStyle(fontSize: 16.0),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(
-                  height: 12.0,
-                )
-              ],
-            ))
-        .toList();
-  }
-
   Widget _buildInformationTab() {
     return const PDFDownloadListWidget();
   }
@@ -879,7 +828,7 @@ class ServiceSummaryItem extends StatelessWidget {
         child: Text(
           field,
           style: const TextStyle(
-            fontSize: 16,
+            fontSize: 14,
             color: Color.fromARGB(255, 135, 135, 135),
           ),
         ),
@@ -890,7 +839,7 @@ class ServiceSummaryItem extends StatelessWidget {
           padding: const EdgeInsets.only(left: 32.0),
           child: Text(
             value,
-            style: const TextStyle(fontSize: 16.0, fontWeight: FontWeight.w500),
+            style: const TextStyle(fontSize: 14.0, fontWeight: FontWeight.w500),
           ),
         ),
       )
