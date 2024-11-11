@@ -627,19 +627,59 @@ class _ServiceItemState extends State<ServiceItem> {
       TextEditingController commandController,
       Service data) {
     return [
-      const Padding(
-        padding: EdgeInsets.only(top: 16.0, bottom: 16.0),
-        child: Text(
-          'Summary',
-          style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w500),
-        ),
+      Row(
+        children: [
+          Expanded(
+            flex: 2,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Padding(
+                  padding: EdgeInsets.only(top: 16.0, bottom: 16.0),
+                  child: Text(
+                    'Summary',
+                    style:
+                        TextStyle(fontSize: 18.0, fontWeight: FontWeight.w500),
+                  ),
+                ),
+                ServiceSummaryItem(field: "Name", value: data.name),
+                const SizedBox(height: 16.0),
+                ServiceSummaryItem(
+                    field: "Status", value: data.status ?? "off"),
+                const SizedBox(height: 16.0),
+                ServiceSummaryItem(
+                    field: "Software version", value: data.image.id ?? ""),
+                const SizedBox(height: 16.0),
+              ],
+            ),
+          ),
+          Expanded(
+              flex: 1,
+              child: Column(
+                children: [
+                  ElevatedButton(
+                    onPressed: () {},
+                    style: ElevatedButton.styleFrom(
+                        elevation: 0.0,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8.0),
+                            side: const BorderSide(
+                              color: Color.fromARGB(255, 88, 88,
+                                  88), // Set the color of the border
+                              width: 2.0, // Set the width of the border
+                            )),
+                        fixedSize: const Size(170.0, 50.0),
+                        backgroundColor: const Color.fromARGB(255, 88, 88, 88)),
+                    child: const Text(
+                      "Update",
+                      style: TextStyle(color: Colors.white, fontSize: 16.0),
+                    ),
+                  ),
+                ],
+              ))
+        ],
       ),
-      ServiceSummaryItem(field: "Name", value: data.name),
-      const SizedBox(height: 16.0),
-      ServiceSummaryItem(field: "Status", value: data.status ?? "off"),
-      const SizedBox(height: 16.0),
-      ServiceSummaryItem(field: "Software version", value: data.image.id ?? ""),
-      const SizedBox(height: 16.0),
+
       const Divider(), // Horizontal line // Add spacing between envVars and static texts
       const SizedBox(height: 16.0),
       const Text(
@@ -835,7 +875,7 @@ class ServiceSummaryItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(children: [
       Expanded(
-        flex: 1,
+        flex: 2,
         child: Text(
           field,
           style: const TextStyle(
@@ -845,9 +885,9 @@ class ServiceSummaryItem extends StatelessWidget {
         ),
       ),
       Expanded(
-        flex: 3,
+        flex: 4,
         child: Padding(
-          padding: const EdgeInsets.only(left: 8.0),
+          padding: const EdgeInsets.only(left: 32.0),
           child: Text(
             value,
             style: const TextStyle(fontSize: 16.0, fontWeight: FontWeight.w500),

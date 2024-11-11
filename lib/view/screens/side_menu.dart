@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:robotic_dashboard/service/navigation_provider.dart';
 import 'package:robotic_dashboard/service/user_client.dart';
+import 'package:robotic_dashboard/utils/warning_dialog.dart';
 
 class SideMenu extends StatefulWidget {
   const SideMenu({Key? key}) : super(key: key);
@@ -76,10 +77,15 @@ class _SideMenuState extends State<SideMenu> {
           ),
           content: SizedBox(
             width: 300,
-            height: 100,
+            height: 170,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                const Padding(
+                  padding: EdgeInsets.only(bottom: 8.0),
+                  child: Text(
+                      "For regular user (UTS), please use your student ID (or staff ID) to sign in (no need for password)"),
+                ),
                 TextField(
                   controller: _usernameController,
                   decoration: const InputDecoration(labelText: 'Username'),
@@ -197,6 +203,10 @@ class _SideMenuState extends State<SideMenu> {
                     icon: const Icon(Icons.account_tree_rounded,
                         color: Colors.white),
                     onPressed: () {
+                      if (!userProvider.isAdmin) {
+                        showNotSignInWarning(context);
+                        return;
+                      }
                       context.read<NavigationProvider>().setPage('fleet');
                     },
                   ),
@@ -224,6 +234,10 @@ class _SideMenuState extends State<SideMenu> {
                   child: IconButton(
                     icon: const Icon(Icons.settings, color: Colors.white),
                     onPressed: () {
+                      if (!userProvider.isAdmin) {
+                        showNotSignInWarning(context);
+                        return;
+                      }
                       context.read<NavigationProvider>().setPage('settings');
                     },
                   ),
