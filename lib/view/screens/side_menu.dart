@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:robotic_dashboard/service/navigation_provider.dart';
 import 'package:robotic_dashboard/service/user_client.dart';
+import 'package:robotic_dashboard/utils/constants.dart';
 import 'package:robotic_dashboard/utils/warning_dialog.dart';
 
 class SideMenu extends StatefulWidget {
   const SideMenu({Key? key}) : super(key: key);
 
   @override
+  // ignore: library_private_types_in_public_api
   _SideMenuState createState() => _SideMenuState();
 }
 
@@ -22,6 +24,7 @@ class _SideMenuState extends State<SideMenu> {
         barrierDismissible: false,
         builder: (BuildContext context) {
           return const AlertDialog(
+            backgroundColor: secondaryColor,
             content: Row(
               children: [
                 CircularProgressIndicator(),
@@ -71,6 +74,7 @@ class _SideMenuState extends State<SideMenu> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
+          backgroundColor: secondaryColor,
           title: const Text(
             "Login",
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.w400),
@@ -122,6 +126,7 @@ class _SideMenuState extends State<SideMenu> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
+          backgroundColor: secondaryColor,
           title: const Text(
             "Logout",
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.w400),
@@ -153,6 +158,7 @@ class _SideMenuState extends State<SideMenu> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
+          backgroundColor: secondaryColor,
           title: const Text(
             "Unable to log out",
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.w400),
@@ -179,11 +185,11 @@ class _SideMenuState extends State<SideMenu> {
     final userProvider = Provider.of<UserProvider>(context);
     return Container(
       width: 100,
-      color: Colors.grey[800],
+      color: actionColor,
       child: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.all(2.0),
+            padding: const EdgeInsets.only(top: 16.0),
             child: IconButton(
               onPressed: () {
                 if (!userProvider.isSignedIn) {
@@ -194,6 +200,9 @@ class _SideMenuState extends State<SideMenu> {
                   size: 40.0, color: Colors.white),
             ),
           ),
+          const SizedBox(
+            height: 32.0,
+          ),
           Expanded(
             child: ListView(
               children: [
@@ -201,7 +210,7 @@ class _SideMenuState extends State<SideMenu> {
                   padding: const EdgeInsets.all(8.0),
                   child: IconButton(
                     icon: const Icon(Icons.account_tree_rounded,
-                        color: Colors.white),
+                        size: 28.0, color: Colors.white),
                     onPressed: () {
                       if (!userProvider.isAdmin) {
                         showNotSignInWarning(context);
@@ -211,28 +220,40 @@ class _SideMenuState extends State<SideMenu> {
                     },
                   ),
                 ),
+                const SizedBox(
+                  height: 12.0,
+                ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: IconButton(
-                    icon: const Icon(Icons.home, color: Colors.white),
+                    icon:
+                        const Icon(Icons.home, size: 28.0, color: Colors.white),
                     onPressed: () {
                       context.read<NavigationProvider>().setPage('dashboard');
                     },
                   ),
                 ),
+                const SizedBox(
+                  height: 12.0,
+                ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: IconButton(
-                    icon: const Icon(Icons.leaderboard, color: Colors.white),
+                    icon: const Icon(Icons.leaderboard,
+                        size: 28.0, color: Colors.white),
                     onPressed: () {
                       context.read<NavigationProvider>().setPage('stats');
                     },
                   ),
                 ),
+                const SizedBox(
+                  height: 12.0,
+                ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: IconButton(
-                    icon: const Icon(Icons.settings, color: Colors.white),
+                    icon: const Icon(Icons.settings,
+                        size: 28.0, color: Colors.white),
                     onPressed: () {
                       if (!userProvider.isAdmin) {
                         showNotSignInWarning(context);
@@ -242,10 +263,14 @@ class _SideMenuState extends State<SideMenu> {
                     },
                   ),
                 ),
+                const SizedBox(
+                  height: 12.0,
+                ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: IconButton(
-                    icon: const Icon(Icons.info, color: Colors.white),
+                    icon:
+                        const Icon(Icons.info, size: 28.0, color: Colors.white),
                     onPressed: () {},
                   ),
                 ),

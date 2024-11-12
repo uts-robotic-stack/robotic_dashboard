@@ -27,7 +27,7 @@ class _MainScreenState extends State<MainScreen> {
     double screenWidth = MediaQuery.of(context).size.width;
     final selectedPage = context.watch<NavigationProvider>().selectedPage;
     return FractionallySizedBox(
-      widthFactor: screenWidth < 1480 ? 1.0 : 1480 / screenWidth,
+      widthFactor: screenWidth < 1520 ? 1.0 : 1520 / screenWidth,
       child: Scaffold(
           drawer: const SideMenu(),
           body: pages[selectedPage] ?? const Dashboard()),

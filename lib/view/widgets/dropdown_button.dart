@@ -1,123 +1,111 @@
 import 'package:flutter/material.dart';
-import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:robotic_dashboard/utils/constants.dart';
 
-class CustomDropdownButton extends StatefulWidget {
-  final List<DropdownItem> dropDownItems;
-  final Widget header;
+class CustomHamburgerDropdown extends StatefulWidget {
+  final List<DropdownItem> items;
+  final double dropdownWidth;
+  final Color dropdownColor;
 
-  const CustomDropdownButton(
-      {super.key, required this.dropDownItems, required this.header});
+  const CustomHamburgerDropdown({
+    Key? key,
+    required this.items,
+    this.dropdownWidth = 10.0, // Default width for the dropdown
+    this.dropdownColor =
+        secondaryColor, // Default color for dropdown background
+  }) : super(key: key);
 
   @override
   // ignore: library_private_types_in_public_api
-  _DropdownButtonState createState() => _DropdownButtonState();
+  _CustomHamburgerDropdownState createState() =>
+      _CustomHamburgerDropdownState();
 }
 
-class _DropdownButtonState extends State<CustomDropdownButton> {
-  String dropdownValue = 'Option 1';
+class _CustomHamburgerDropdownState extends State<CustomHamburgerDropdown> {
+  OverlayEntry? _overlayEntry;
+  final LayerLink _layerLink = LayerLink();
+
+  void _toggleDropdown() {
+    if (_overlayEntry == null) {
+      _showDropdown();
+    } else {
+      _hideDropdown();
+    }
+  }
+
+  void _showDropdown() {
+    _overlayEntry = _createOverlayEntry();
+    Overlay.of(context).insert(_overlayEntry!);
+  }
+
+  void _hideDropdown() {
+    _overlayEntry?.remove();
+    _overlayEntry = null;
+  }
+
+  OverlayEntry _createOverlayEntry() {
+    RenderBox renderBox = context.findRenderObject() as RenderBox;
+    var size = renderBox.size;
+
+    return OverlayEntry(
+      builder: (context) => Positioned(
+        width: widget.dropdownWidth,
+        child: CompositedTransformFollower(
+          link: _layerLink,
+          showWhenUnlinked: false,
+          offset: Offset(-widget.dropdownWidth + size.width, size.height),
+          child: Material(
+            elevation: 0.0,
+            borderRadius: const BorderRadius.all(Radius.circular(8.0)),
+            color: borderColor,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: widget.items.map((DropdownItem item) {
+                return InkWell(
+                  onTap: () {
+                    item.onChanged();
+                    _hideDropdown();
+                  },
+                  child: Container(
+                    width: widget.dropdownWidth,
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 12.0, horizontal: 16.0),
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      item.label,
+                      style: const TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.w500,
+                          fontSize: 14.0), // Text color
+                    ),
+                  ),
+                );
+              }).toList(),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    return DropdownButtonHideUnderline(
-      child: DropdownButton2(
-        customButton: Container(
-          padding: const EdgeInsets.all(8),
-          decoration: const BoxDecoration(
-            color: Color.fromARGB(255, 90, 90, 90),
-            borderRadius: BorderRadius.all(Radius.circular(10)),
-          ),
-          child: widget.header,
-        ),
-        items: [
-          ...widget.dropDownItems.map(
-            (item) => DropdownMenuItem<DropdownItem>(
-              value: item,
-              child: DropdownItemBuilder.buildItem(item),
-            ),
-          ),
-        ],
-        onChanged: (value) {
-          DropdownItemBuilder.onChanged(context, value!);
-        },
-        dropdownStyleData: DropdownStyleData(
-          width: 160,
-          padding: const EdgeInsets.symmetric(vertical: 6),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(4),
-            color: const Color.fromARGB(255, 90, 90, 90),
-          ),
-          offset: const Offset(0, -5),
-        ),
-        menuItemStyleData: MenuItemStyleData(
-          customHeights: [
-            ...List<double>.filled(widget.dropDownItems.length, 48),
-            // 8,
-            // ...List<double>.filled(DropdownItemBuilder.secondItems.length, 48),
-          ],
-          padding: const EdgeInsets.only(left: 16, right: 16),
-        ),
+    return CompositedTransformTarget(
+      link: _layerLink,
+      child: IconButton(
+        icon: const Icon(Icons.menu, size: 30),
+        onPressed: _toggleDropdown,
       ),
     );
   }
 }
 
-class DropdownHeader extends StatelessWidget {
-  const DropdownHeader({
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return const Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Icon(
-          Icons.settings,
-          size: 25,
-          color: Colors.white,
-        ),
-        SizedBox(
-          width: 10,
-        ),
-        Text("Action", style: TextStyle(color: Colors.white)),
-      ],
-    );
-  }
-}
-
 class DropdownItem {
-  const DropdownItem({
-    required this.text,
-    required this.icon,
-    required this.onSelected,
+  final String label;
+  final VoidCallback onChanged;
+
+  DropdownItem({
+    required this.label,
+    required this.onChanged,
   });
-
-  final String text;
-  final IconData icon;
-  final VoidCallback onSelected;
-}
-
-abstract class DropdownItemBuilder {
-  static Widget buildItem(DropdownItem item) {
-    return Row(
-      children: [
-        Icon(item.icon, color: Colors.white, size: 22),
-        const SizedBox(
-          width: 10,
-        ),
-        Expanded(
-          child: Text(
-            item.text,
-            style: const TextStyle(
-              color: Colors.white,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  static void onChanged(BuildContext context, DropdownItem item) {
-    item.onSelected();
-  }
 }

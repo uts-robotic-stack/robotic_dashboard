@@ -77,17 +77,10 @@ class _ServiceManagerState extends State<ServiceManager> {
       setState(() {
         for (var entry in services.entries) {
           if (_defaultShowAllServices) {
-            _services[entry.key]?.status = entry.value.status;
-            if (!_services.containsKey(entry.key)) {
-              _services[entry.key] = entry.value;
-            }
+            _services[entry.key] = entry.value;
           } else {
-            // Remove
-            if (!_services.containsKey(entry.key)) {
-              _services[entry.key] = entry.value;
-            }
             if (!_excludedServices.contains(entry.key)) {
-              _services[entry.key]?.status = entry.value.status;
+              _services[entry.key] = entry.value;
             } else {
               _services.remove(entry.key);
             }

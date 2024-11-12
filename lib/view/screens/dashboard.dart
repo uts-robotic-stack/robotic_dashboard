@@ -31,7 +31,7 @@ class Dashboard extends StatelessWidget {
           child: Column(
             children: [
               Header(
-                headerText: 'ROBOTIC DASHBOARD',
+                headerText: 'DASHBOARD',
               ),
               DeviceInfo(),
               ControllerDashboard(),
@@ -75,13 +75,12 @@ class _DeviceInfoState extends State<DeviceInfo> {
           decoration: BoxDecoration(
               color: secondaryColor,
               borderRadius: const BorderRadius.all(Radius.circular(10)),
-              border:
-                  Border.all(color: const Color.fromARGB(255, 193, 193, 193))),
-          child:
-              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Padding(
-              padding: const EdgeInsets.only(bottom: 4.0, left: 12.0),
-              child: Row(
+              border: Border.all(color: borderColor)),
+          child: Padding(
+            padding: const EdgeInsets.only(left: 8.0),
+            child:
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Row(
@@ -92,18 +91,17 @@ class _DeviceInfoState extends State<DeviceInfo> {
                       ),
                       Padding(
                         padding: const EdgeInsets.only(left: 8.0),
-                        child:
-                            Icon(Icons.circle, color: _statusColor, size: 17),
+                        child: Icon(Icons.check_circle_outline,
+                            color: _statusColor, size: 20),
                       ),
                     ],
                   ),
-                  CustomDropdownButton(
-                    header: const DropdownHeader(),
-                    dropDownItems: [
+                  CustomHamburgerDropdown(
+                    dropdownWidth: 150.0, // Set a custom width for the dropdown
+                    items: [
                       DropdownItem(
-                        text: 'Update',
-                        icon: Icons.update,
-                        onSelected: () {
+                        label: 'Update',
+                        onChanged: () {
                           if (!userProvider.isSignedIn) {
                             showNotSignInWarning(context);
                             return;
@@ -111,22 +109,8 @@ class _DeviceInfoState extends State<DeviceInfo> {
                         },
                       ),
                       DropdownItem(
-                        text: 'Shutdown',
-                        icon: Icons.logout,
-                        onSelected: () {
-                          if (!userProvider.isSignedIn) {
-                            showNotSignInWarning(context);
-                            return;
-                          }
-                          _statusColor = Colors.red;
-                          setState(() {});
-                          _deviceHttpClient.shutdownDevice();
-                        },
-                      ),
-                      DropdownItem(
-                        text: 'Reboot',
-                        icon: Icons.restart_alt,
-                        onSelected: () {
+                        label: 'Reboot',
+                        onChanged: () {
                           if (!userProvider.isSignedIn) {
                             showNotSignInWarning(context);
                             return;
@@ -136,15 +120,30 @@ class _DeviceInfoState extends State<DeviceInfo> {
                           _deviceHttpClient.restartDevice();
                         },
                       ),
+                      DropdownItem(
+                        label: 'Shutdown',
+                        onChanged: () {
+                          if (!userProvider.isSignedIn) {
+                            showNotSignInWarning(context);
+                            return;
+                          }
+                          _statusColor = Colors.red;
+                          setState(() {});
+                          _deviceHttpClient.shutdownDevice();
+                        },
+                      ),
                     ],
                   ),
                 ],
               ),
-            ),
-            const Divider(),
-            const SizedBox(height: 8.0),
-            Expanded(child: DeviceInfoList())
-          ]),
+              const Padding(
+                padding: EdgeInsets.only(right: 8.0),
+                child: Divider(),
+              ),
+              const SizedBox(height: 8.0),
+              Expanded(child: DeviceInfoList())
+            ]),
+          ),
         ),
       ),
     );
@@ -166,8 +165,7 @@ class ControllerDashboard extends StatelessWidget {
             decoration: BoxDecoration(
                 color: secondaryColor,
                 borderRadius: const BorderRadius.all(Radius.circular(10)),
-                border: Border.all(
-                    color: const Color.fromARGB(255, 193, 193, 193))),
+                border: Border.all(color: borderColor)),
             child: const ServiceManager()),
       ),
     );

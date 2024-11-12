@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:robotic_dashboard/utils/constants.dart';
 
 void showNotAdminWarning(BuildContext context) {
   showDialog(
@@ -7,6 +8,7 @@ void showNotAdminWarning(BuildContext context) {
     builder: (BuildContext context) {
       // Use UserProvider's signIn function
       return AlertDialog(
+        backgroundColor: secondaryColor,
         title: const Text(
           "Unable to change this setting",
           style: TextStyle(fontSize: 20, fontWeight: FontWeight.w400),
@@ -35,6 +37,7 @@ void showNotSignInWarning(BuildContext context) {
     builder: (BuildContext context) {
       // Use UserProvider's signIn function
       return AlertDialog(
+        backgroundColor: secondaryColor,
         title: const Text(
           "Please sign in",
           style: TextStyle(fontSize: 20, fontWeight: FontWeight.w400),

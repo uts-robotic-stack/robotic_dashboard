@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 // ignore: avoid_web_libraries_in_flutter
 import 'dart:html' as html;
 import 'package:flutter/services.dart';
+import 'package:robotic_dashboard/utils/constants.dart';
 import 'package:yaml/yaml.dart';
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 
@@ -56,6 +57,7 @@ class _PDFDownloadListWidgetState extends State<PDFDownloadListWidget> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
+            backgroundColor: secondaryColor,
             title: const Text("Download Failed"),
             content: Text("Failed to download the file: $e"),
             actions: [

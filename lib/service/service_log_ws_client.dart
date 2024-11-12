@@ -53,6 +53,7 @@ class ServiceLogsWSClient with ChangeNotifier {
   void disconnectWebSocket() {
     _channel?.sink.close(status.normalClosure);
     _serviceName = "";
+    _logs.clear();
     notifyListeners();
   }
 

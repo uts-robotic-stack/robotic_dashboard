@@ -38,6 +38,7 @@ class _ServiceItemState extends State<ServiceItem> {
           barrierDismissible: false, // Prevent closing the dialog manually
           builder: (BuildContext context) {
             return AlertDialog(
+              backgroundColor: secondaryColor,
               title: const Text('Starting service',
                   style:
                       TextStyle(fontSize: 18.0, fontWeight: FontWeight.w500)),
@@ -66,11 +67,12 @@ class _ServiceItemState extends State<ServiceItem> {
           },
         );
 
-        // Poll the service status until it's no longer "off"
-        while (service.status == "off") {
-          await Future.delayed(
-              const Duration(milliseconds: 100)); // Poll every 2 seconds
-        }
+        // // Poll the service status until it's no longer "off"
+        // while (service.status == "off") {
+        //   await Future.delayed(
+        //       const Duration(milliseconds: 100)); // Poll every 2 seconds
+        // }
+        await Future.delayed(const Duration(milliseconds: 1000));
 
         // Close the loading dialog once the service status is no longer "off"
         if (mounted && !pendingAlertClosed) {
@@ -91,6 +93,7 @@ class _ServiceItemState extends State<ServiceItem> {
               width: 400,
               height: 150,
               child: AlertDialog(
+                backgroundColor: secondaryColor,
                 title: const Text(
                   'Error',
                   style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w500),
@@ -116,7 +119,6 @@ class _ServiceItemState extends State<ServiceItem> {
           },
         );
       }
-      // Additional error handling can be done here if needed
     }
   }
 
@@ -130,6 +132,7 @@ class _ServiceItemState extends State<ServiceItem> {
           barrierDismissible: false, // Prevent closing the dialog manually
           builder: (BuildContext context) {
             return const AlertDialog(
+              backgroundColor: secondaryColor,
               title: Text(
                 'Stopping service',
                 style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w500),
@@ -169,6 +172,7 @@ class _ServiceItemState extends State<ServiceItem> {
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(
+              backgroundColor: secondaryColor,
               title: const Text(
                 'Error',
                 style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w500),
@@ -210,6 +214,7 @@ class _ServiceItemState extends State<ServiceItem> {
           barrierDismissible: false, // Prevent closing the dialog manually
           builder: (BuildContext context) {
             return AlertDialog(
+              backgroundColor: secondaryColor,
               title: const Text('Starting service',
                   style:
                       TextStyle(fontSize: 18.0, fontWeight: FontWeight.w500)),
@@ -238,11 +243,13 @@ class _ServiceItemState extends State<ServiceItem> {
           },
         );
 
-        // Poll the service status until it's no longer "off"
-        while (service.status == "off") {
-          await Future.delayed(
-              const Duration(milliseconds: 100)); // Poll every 2 seconds
-        }
+        // // Poll the service status until it's no longer "off"
+        // while (service.status == "off") {
+        //   await Future.delayed(
+        //       const Duration(milliseconds: 100)); // Poll every 2 seconds
+        // }
+
+        await Future.delayed(const Duration(milliseconds: 1000));
 
         // Close the loading dialog once the service status is no longer "off"
         if (mounted && !pendingAlertClosed) {
@@ -263,6 +270,7 @@ class _ServiceItemState extends State<ServiceItem> {
               width: 400,
               height: 150,
               child: AlertDialog(
+                backgroundColor: secondaryColor,
                 title: const Text(
                   'Error',
                   style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w500),
@@ -293,8 +301,7 @@ class _ServiceItemState extends State<ServiceItem> {
   }
 
   Widget _buildServiceName(Service data) {
-    return SizedBox(
-      width: 175,
+    return Expanded(
       child: Padding(
         padding:
             const EdgeInsets.symmetric(vertical: 5, horizontal: defaultPadding),
@@ -307,43 +314,55 @@ class _ServiceItemState extends State<ServiceItem> {
   }
 
   Widget _buildStatusBar(Service data) {
-    BoxDecoration decoration = const BoxDecoration(
+    Icon icon = const Icon(
+      Icons.cancel_outlined,
+      size: 20.0,
       color: Color.fromARGB(255, 255, 75, 75),
-      borderRadius: BorderRadius.all(Radius.circular(6)),
     );
     switch (data.status) {
       case "off":
-        decoration = const BoxDecoration(
+        icon = const Icon(
+          Icons.cancel_outlined,
+          size: 20.0,
           color: Color.fromARGB(255, 255, 75, 75),
-          borderRadius: BorderRadius.all(Radius.circular(6)),
         );
       case "running":
-        decoration = const BoxDecoration(
+        icon = const Icon(
+          Icons.check_circle_outline,
+          size: 20.0,
           color: Color.fromARGB(255, 34, 157, 67),
-          borderRadius: BorderRadius.all(Radius.circular(6)),
         );
       case "updating":
-        decoration = const BoxDecoration(
+        icon = const Icon(
+          Icons.download,
+          size: 20.0,
           color: Color.fromARGB(255, 0, 91, 166),
-          borderRadius: BorderRadius.all(Radius.circular(6)),
         );
       case "starting":
-        decoration = const BoxDecoration(
+        icon = const Icon(
+          Icons.start,
+          size: 20.0,
           color: Color.fromARGB(255, 191, 176, 42),
-          borderRadius: BorderRadius.all(Radius.circular(6)),
         );
     }
 
     String status = data.status ?? 'off';
-    return Container(
-      width: 110,
-      height: 25,
-      decoration: decoration,
-      padding: const EdgeInsets.symmetric(horizontal: defaultPadding),
-      child: Center(
-        child: Text(
-          status,
-          style: const TextStyle(color: Colors.white, fontSize: 14.0),
+    return Expanded(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+        child: Center(
+          child: Row(
+            children: [
+              Text(
+                status,
+                style: const TextStyle(
+                    color: Colors.black,
+                    fontSize: 14.0,
+                    fontWeight: FontWeight.w600),
+              ),
+              Padding(padding: const EdgeInsets.only(left: 4.0), child: icon)
+            ],
+          ),
         ),
       ),
     );
@@ -360,73 +379,75 @@ class _ServiceItemState extends State<ServiceItem> {
 
     final logsProvider = Provider.of<ServiceLogsWSClient>(context);
     final userProvider = Provider.of<UserProvider>(context);
-    return Row(
-      children: [
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: padding),
-          child: IconButton(
-            onPressed: () {
-              if (!userProvider.isSignedIn) {
-                showNotSignInWarning(context);
-                return;
-              }
-              if (data.status == "off") {
-                _loadAndRunService(data);
-              }
-            },
-            icon: Icon(Icons.play_arrow, size: size),
+    return Expanded(
+      child: Row(
+        children: [
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: padding),
+            child: IconButton(
+              onPressed: () {
+                if (!userProvider.isSignedIn) {
+                  showNotSignInWarning(context);
+                  return;
+                }
+                if (data.status == "off") {
+                  _loadAndRunService(data);
+                }
+              },
+              icon: Icon(Icons.play_arrow, size: size),
+            ),
           ),
-        ),
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: padding),
-          child: IconButton(
-            onPressed: () {
-              if (!userProvider.isSignedIn) {
-                showNotSignInWarning(context);
-                return;
-              }
-              _stopAndUnloadService(data);
-            },
-            icon: Icon(Icons.stop, size: size),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: padding),
+            child: IconButton(
+              onPressed: () {
+                if (!userProvider.isSignedIn) {
+                  showNotSignInWarning(context);
+                  return;
+                }
+                _stopAndUnloadService(data);
+              },
+              icon: Icon(Icons.stop, size: size),
+            ),
           ),
-        ),
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: padding),
-          child: IconButton(
-            onPressed: () {
-              if (!userProvider.isSignedIn) {
-                showNotSignInWarning(context);
-                return;
-              }
-              _resetService(data);
-            },
-            icon: Icon(Icons.settings_backup_restore, size: size),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: padding),
+            child: IconButton(
+              onPressed: () {
+                if (!userProvider.isSignedIn) {
+                  showNotSignInWarning(context);
+                  return;
+                }
+                _resetService(data);
+              },
+              icon: Icon(Icons.settings_backup_restore, size: size),
+            ),
           ),
-        ),
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: padding),
-          child: IconButton(
-            onPressed: () {
-              // Start WS
-              if (data.status != "off") {
-                logsProvider.disconnectWebSocket();
-                logsProvider.logs.clear();
-                logsProvider.updateServiceName(data.name);
-              }
-            },
-            icon: Icon(Icons.my_library_books_outlined, size: size),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: padding),
+            child: IconButton(
+              onPressed: () {
+                // Start WS
+                if (data.status != "off") {
+                  logsProvider.disconnectWebSocket();
+                  logsProvider.logs.clear();
+                  logsProvider.updateServiceName(data.name);
+                }
+              },
+              icon: Icon(Icons.my_library_books_outlined, size: size),
+            ),
           ),
-        ),
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: padding),
-          child: IconButton(
-            onPressed: () {
-              _showServiceSettings(data);
-            },
-            icon: Icon(Icons.settings, size: size),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: padding),
+            child: IconButton(
+              onPressed: () {
+                _showServiceSettings(data);
+              },
+              icon: Icon(Icons.settings, size: size),
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -476,6 +497,7 @@ class _ServiceItemState extends State<ServiceItem> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
+          backgroundColor: secondaryColor,
           content: SizedBox(
             width: 900,
             height: 500,
@@ -487,7 +509,7 @@ class _ServiceItemState extends State<ServiceItem> {
                     tabs: [
                       Tab(
                         child: Text(
-                          'Settings',
+                          'Overview',
                           style: TextStyle(fontSize: 16),
                         ),
                       ),
@@ -529,6 +551,7 @@ class _ServiceItemState extends State<ServiceItem> {
                     barrierDismissible: false,
                     builder: (BuildContext context) {
                       return AlertDialog(
+                        backgroundColor: secondaryColor,
                         title: const Text(
                           'Saving Service Settings',
                           style: TextStyle(
@@ -614,6 +637,16 @@ class _ServiceItemState extends State<ServiceItem> {
       Map<String, TextEditingController> envVarControllers,
       TextEditingController commandController,
       Service data) {
+    String formatSoftwareVersion(Service data) {
+      if (data.image.id == null) {
+        return data.image.name;
+      }
+      if (data.image.id!.contains("sha")) {
+        return data.image.id!.substring(7, 17);
+      }
+      return "";
+    }
+
     return [
       Row(
         children: [
@@ -636,7 +669,8 @@ class _ServiceItemState extends State<ServiceItem> {
                     field: "Status", value: data.status ?? "off"),
                 const SizedBox(height: 16.0),
                 ServiceSummaryItem(
-                    field: "Software version", value: data.image.id ?? ""),
+                    field: "Software version",
+                    value: formatSoftwareVersion(data)),
                 const SizedBox(height: 16.0),
               ],
             ),
@@ -652,12 +686,11 @@ class _ServiceItemState extends State<ServiceItem> {
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8.0),
                             side: const BorderSide(
-                              color: Color.fromARGB(255, 88, 88,
-                                  88), // Set the color of the border
+                              color: actionColor, // Set the color of the border
                               width: 2.0, // Set the width of the border
                             )),
-                        fixedSize: const Size(170.0, 50.0),
-                        backgroundColor: const Color.fromARGB(255, 88, 88, 88)),
+                        fixedSize: const Size(160.0, 40.0),
+                        backgroundColor: actionColor),
                     child: const Text(
                       "Update",
                       style: TextStyle(color: Colors.white, fontSize: 16.0),
@@ -798,7 +831,7 @@ class _ServiceItemState extends State<ServiceItem> {
           child: Column(
             children: [
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   _buildServiceName(widget.data),
                   _buildStatusBar(widget.data),

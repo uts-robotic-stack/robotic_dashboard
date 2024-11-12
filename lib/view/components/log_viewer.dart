@@ -14,95 +14,115 @@ class LogsViewer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final logsProvider = Provider.of<ServiceLogsWSClient>(context);
-    return Column(
-      children: [
-        Container(
-          color: logWindowColor,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const Padding(
-                padding: EdgeInsets.all(defaultPadding),
-                child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: defaultPadding),
-                  child: Text(
-                    "Logs",
-                    style: TextStyle(color: Colors.black, fontSize: 14.0),
+    return Padding(
+      padding: const EdgeInsets.only(
+          top: defaultPadding, bottom: defaultPadding, right: defaultPadding),
+      child: Column(
+        children: [
+          Container(
+            decoration: BoxDecoration(
+                color: secondaryColor,
+                borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(10),
+                    topRight: Radius.circular(10)),
+                border: Border.all(color: borderColor)),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Padding(
+                  padding: EdgeInsets.all(defaultPadding),
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: defaultPadding),
+                    child: Text(
+                      "Logs",
+                      style: TextStyle(color: Colors.black, fontSize: 14.0),
+                    ),
                   ),
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: defaultPadding),
-                child: Row(
-                  children: [
-                    AdaptiveSwitch(
-                      onChanged: (value) {
-                        _follow = value;
-                      },
-                    ),
-                    const SizedBox(
-                      width: 10,
-                    ),
-                    IconButton(
-                      onPressed: () {},
-                      icon: const Icon(
-                        Icons.refresh,
-                        size: 17.0,
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: defaultPadding),
+                  child: Row(
+                    children: [
+                      AdaptiveSwitch(
+                        onChanged: (value) {
+                          _follow = value;
+                        },
                       ),
-                    ),
-                    IconButton(
-                      onPressed: () {},
-                      icon: const Icon(
-                        Icons.download,
-                        size: 17.0,
+                      const SizedBox(
+                        width: 10,
                       ),
-                    ),
-                    IconButton(
-                      onPressed: () {
-                        logsProvider.disconnectWebSocket();
-                        logsProvider.logs.clear();
-                      },
-                      icon: const Icon(
-                        Icons.clear,
-                        size: 17.0,
+                      IconButton(
+                        onPressed: () {},
+                        icon: const Icon(
+                          Icons.refresh,
+                          size: 17.0,
+                        ),
                       ),
-                    )
-                  ],
+                      IconButton(
+                        onPressed: () {},
+                        icon: const Icon(
+                          Icons.download,
+                          size: 17.0,
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: () {
+                          logsProvider.disconnectWebSocket();
+                          logsProvider.logs.clear();
+                        },
+                        icon: const Icon(
+                          Icons.clear,
+                          size: 17.0,
+                        ),
+                      )
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
-        Expanded(
-            child: SelectionArea(
-          child: Container(
-              width: double.infinity,
-              height: double.infinity,
-              padding: const EdgeInsets.all(defaultPadding),
-              decoration: const BoxDecoration(
-                color: Colors.black87,
-              ),
-              child: ListView.builder(
-                shrinkWrap: true,
-                controller: _controller,
-                itemCount: logsProvider.logs.length,
-                itemBuilder: (context, index) {
-                  if (_follow) {
-                    var scrollPosition = _controller.position;
-                    _controller.jumpTo(scrollPosition.maxScrollExtent);
-                  }
-                  return ListTile(
-                    minVerticalPadding: 2.0,
-                    dense: true,
-                    contentPadding: EdgeInsets.zero,
-                    visualDensity: const VisualDensity(vertical: -4),
-                    title: _LogDetails(
-                        logsProvider.logs[index], logsProvider.serviceName),
-                  );
-                },
-              )),
-        ))
-      ],
+          Expanded(
+              child: SelectionArea(
+            child: Container(
+                width: double.infinity,
+                height: double.infinity,
+                padding: const EdgeInsets.all(defaultPadding),
+                decoration: const BoxDecoration(
+                  borderRadius: BorderRadius.only(
+                      bottomLeft: Radius.circular(10),
+                      bottomRight: Radius.circular(10)),
+                  color: Colors.black87,
+                ),
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  controller: _controller,
+                  itemCount: logsProvider.logs.length,
+                  itemBuilder: (context, index) {
+                    if (_follow) {
+                      var scrollPosition = _controller.position;
+                      _controller.jumpTo(scrollPosition.maxScrollExtent);
+                    }
+                    return ListTile(
+                      minVerticalPadding: 2.0,
+                      dense: true,
+                      contentPadding: EdgeInsets.zero,
+                      visualDensity: const VisualDensity(vertical: -4),
+                      title: Text(
+                        logsProvider.logs[index],
+                        style: const TextStyle(
+                          fontStyle: FontStyle.normal,
+                          fontFamily: 'Ubuntu Mono',
+                          fontSize: 13,
+                          color: Colors.white,
+                        ),
+                      ),
+                    );
+                  },
+                )),
+          ))
+        ],
+      ),
     );
   }
 }
@@ -114,6 +134,7 @@ class _LogDetails extends StatelessWidget {
   String? containerName;
   String? content;
   String? remainder;
+  String? _originalEntry;
 
   _LogDetails(String logEntry, String containerName) {
     parseLogEntry(logEntry, containerName);
@@ -121,6 +142,7 @@ class _LogDetails extends StatelessWidget {
 
   void parseLogEntry(String logEntry, String containerName) {
     // Split the log entry by whitespace
+    _originalEntry = logEntry;
     List<String> logParts = logEntry.split(" ");
 
     // Extract timestamp and log type
@@ -151,23 +173,7 @@ class _LogDetails extends StatelessWidget {
       TextSpan(
         children: [
           TextSpan(
-            text: "$timestamp ",
-            style: const TextStyle(
-              fontFamily: 'Ubuntu Mono',
-              fontSize: 13,
-              color: Colors.white,
-            ),
-          ),
-          TextSpan(
-            text: logType! + remainder!,
-            style: TextStyle(
-              fontFamily: 'Ubuntu Mono',
-              fontSize: 13,
-              color: logTypeColor(logType!),
-            ),
-          ),
-          TextSpan(
-            text: content,
+            text: _originalEntry,
             style: const TextStyle(
               fontStyle: FontStyle.normal,
               fontFamily: 'Ubuntu Mono',

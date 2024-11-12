@@ -28,7 +28,7 @@ class RoboticsDashboard extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Robotics Dashboard',
       theme: ThemeData.light().copyWith(
-        scaffoldBackgroundColor: bgColor,
+        scaffoldBackgroundColor: secondaryColor,
         textTheme: Theme.of(context).textTheme.apply(
               fontFamily: 'Poppins',
               bodyColor: Colors.black,
