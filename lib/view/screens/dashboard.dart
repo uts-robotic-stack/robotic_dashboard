@@ -20,22 +20,44 @@ class Dashboard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final userProvider = Provider.of<UserProvider>(context);
     return SafeArea(
         child: Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (Responsive.isDesktop(context))
           const SizedBox(width: defaultSideMenuWidth, child: SideMenu()),
-        const Expanded(
+        Expanded(
           flex: 1,
           child: Column(
             children: [
-              Header(
-                headerText: 'DASHBOARD',
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Header(
+                    headerText: 'DASHBOARD',
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(right: 16.0, top: 16.0),
+                    child: SizedBox(
+                        height: 48,
+                        child: Container(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 16.0),
+                            decoration: BoxDecoration(
+                                color: secondaryColor,
+                                borderRadius:
+                                    const BorderRadius.all(Radius.circular(10)),
+                                border: Border.all(color: borderColor)),
+                            child: Center(
+                                child: Text("User: ${userProvider.name}")))),
+                  ),
+                ],
               ),
-              DeviceInfo(),
-              ControllerDashboard(),
-              SizedBox(
+              const DeviceInfo(),
+              const ControllerDashboard(),
+              const SizedBox(
                 height: defaultPadding,
               ),
             ],

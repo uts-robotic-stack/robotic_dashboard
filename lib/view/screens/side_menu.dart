@@ -111,7 +111,7 @@ class _SideMenuState extends State<SideMenu> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 const Padding(
-                  padding: EdgeInsets.only(bottom: 8.0),
+                  padding: EdgeInsets.only(bottom: 24.0),
                   child: Text(
                       "For regular user (UTS), please use your student ID (or staff ID) to sign in (no need for password)"),
                 ),

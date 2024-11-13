@@ -14,11 +14,15 @@ class UserProvider with ChangeNotifier {
   bool _signedIn = false;
   bool get isSignedIn => _signedIn;
 
+  String? _name;
+  String get name => _name ?? "observer";
+
   final String _baseUrl = dotenv.env['BASE_URL'] ??
       const String.fromEnvironment("BASE_URL",
           defaultValue: "192.168.27.1:8080");
 
   Future<void> signIn(String username, String password) async {
+    _name = username;
     if (_signedIn) {
       return;
     }
@@ -51,7 +55,6 @@ class UserProvider with ChangeNotifier {
           _isMaintainer = false;
           _isAdmin = false;
         }
-
         notifyListeners();
       } else {
         throw Exception('Failed to sign in: ${response.reasonPhrase}');

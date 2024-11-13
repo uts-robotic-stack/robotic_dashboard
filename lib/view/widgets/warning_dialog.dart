@@ -140,7 +140,7 @@ Future<bool> showUpdateWarningDialog(BuildContext context) async {
       return AlertDialog(
         backgroundColor: secondaryColor,
         title: const Text(
-          "Shutting down device",
+          "Updating device",
           style: TextStyle(fontSize: 20, fontWeight: FontWeight.w400),
         ),
         content: const SizedBox(
