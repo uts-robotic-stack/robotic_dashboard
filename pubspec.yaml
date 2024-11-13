@@ -77,8 +77,6 @@ flutter:
     - assets/images/
     - assets/icons/
     - assets/fonts/
-    - assets/js/pdf.mjs
-    - assets/js/pdf.worker.mjs
     - assets/pdfs/test.pdf
     - assets/pdfs/pdf_lists.yaml
     - assets/.env
