@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:robotic_dashboard/service/navigation_provider.dart';
 import 'package:robotic_dashboard/service/user_client.dart';
 import 'package:robotic_dashboard/utils/constants.dart';
-import 'package:robotic_dashboard/utils/warning_dialog.dart';
+import 'package:robotic_dashboard/view/widgets/warning_dialog.dart';
 
 class SideMenu extends StatefulWidget {
   const SideMenu({Key? key}) : super(key: key);
@@ -16,6 +16,31 @@ class SideMenu extends StatefulWidget {
 class _SideMenuState extends State<SideMenu> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  String? forceErrorText;
+  bool isLoading = false;
+
+  String? validator(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'This field is required';
+    }
+    if (value.length != value.replaceAll(' ', '').length) {
+      return 'Username must not contain any spaces';
+    }
+    if (value.length <= 4) {
+      return 'Username should be at least 5 characters long';
+    }
+    return null;
+  }
+
+  void onChanged(String value) {
+    // Nullify forceErrorText if the input changed.
+    if (forceErrorText != null) {
+      setState(() {
+        forceErrorText = null;
+      });
+    }
+  }
 
   void _showLoginDialog() {
     Future<void> login() async {
@@ -81,7 +106,7 @@ class _SideMenuState extends State<SideMenu> {
           ),
           content: SizedBox(
             width: 300,
-            height: 170,
+            height: 220,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -90,23 +115,36 @@ class _SideMenuState extends State<SideMenu> {
                   child: Text(
                       "For regular user (UTS), please use your student ID (or staff ID) to sign in (no need for password)"),
                 ),
-                TextField(
-                  controller: _usernameController,
-                  decoration: const InputDecoration(labelText: 'Username'),
-                  onSubmitted: (_) => login(),
+                Form(
+                  key: formKey,
+                  child: TextFormField(
+                    controller: _usernameController,
+                    forceErrorText: forceErrorText,
+                    decoration: const InputDecoration(labelText: 'Username'),
+                    validator: validator,
+                    onChanged: onChanged,
+                  ),
                 ),
-                TextField(
-                  controller: _passwordController,
-                  decoration: const InputDecoration(labelText: 'Password'),
-                  obscureText: true,
-                  onSubmitted: (_) => login(),
+                Padding(
+                  padding: const EdgeInsets.only(top: 16.0),
+                  child: TextField(
+                    controller: _passwordController,
+                    decoration: const InputDecoration(labelText: 'Password'),
+                    obscureText: true,
+                  ),
                 ),
               ],
             ),
           ),
           actions: [
             TextButton(
-              onPressed: login,
+              onPressed: () {
+                final bool isValid = formKey.currentState?.validate() ?? false;
+                if (!isValid) {
+                  return;
+                }
+                login();
+              },
               child: const Text('Login'),
             ),
             TextButton(

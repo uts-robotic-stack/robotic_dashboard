@@ -5,7 +5,7 @@ import 'dart:async';
 import 'package:robotic_dashboard/model/docker/service.dart';
 import 'package:robotic_dashboard/service/user_client.dart';
 import 'package:robotic_dashboard/utils/constants.dart';
-import 'package:robotic_dashboard/utils/warning_dialog.dart';
+import 'package:robotic_dashboard/view/widgets/warning_dialog.dart';
 import 'package:robotic_dashboard/view/widgets/service_item.dart';
 
 class ServiceManager extends StatefulWidget {
@@ -173,7 +173,7 @@ class _ServiceManagerState extends State<ServiceManager> {
         )
       ]),
       const Padding(
-        padding: EdgeInsets.only(top: 6.0),
+        padding: EdgeInsets.only(top: 6.0, left: 0.0),
         child: Divider(),
       ),
       Expanded(

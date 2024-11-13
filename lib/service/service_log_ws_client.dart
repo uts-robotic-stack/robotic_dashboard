@@ -39,6 +39,7 @@ class ServiceLogsWSClient with ChangeNotifier {
 
     // Listen to the stream and update logs
     _channel?.stream.listen((message) {
+      message.replaceAll(RegExp(r'[^\x20-\x7E]'), '');
       _logs.add(message);
       notifyListeners();
     }, onError: (error) {

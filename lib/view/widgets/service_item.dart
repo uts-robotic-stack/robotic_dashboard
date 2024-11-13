@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:robotic_dashboard/service/service_http_client.dart';
 import 'package:robotic_dashboard/service/service_log_ws_client.dart';
 import 'package:robotic_dashboard/service/user_client.dart';
-import 'package:robotic_dashboard/utils/warning_dialog.dart';
+import 'package:robotic_dashboard/view/widgets/warning_dialog.dart';
 import 'package:robotic_dashboard/view/widgets/adaptive_switch.dart';
 import 'package:robotic_dashboard/view/widgets/pdf_downloader.dart';
 import 'package:robotic_dashboard/responsive/responsive.dart';
@@ -822,7 +822,8 @@ class _ServiceItemState extends State<ServiceItem> {
       children: [
         Container(
           height: 75,
-          padding: const EdgeInsets.all(defaultPadding),
+          padding: const EdgeInsets.only(
+              top: defaultPadding, bottom: defaultPadding, left: 8.0),
           decoration: BoxDecoration(
             color: secondaryColor,
             borderRadius: const BorderRadius.all(Radius.circular(10)),
