@@ -94,6 +94,7 @@ class UserProvider with ChangeNotifier {
     _isAdmin = false;
     _token = null;
     _signedIn = false;
+    _name = "observer";
     notifyListeners();
   }
 }
