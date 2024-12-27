@@ -48,4 +48,22 @@ class DeviceHttpClient {
           'Failed to load device information. Status code: ${response.statusCode}');
     }
   }
+
+  Future<Map<String, dynamic>> updateDevice() async {
+    final response = await http.post(
+      Uri.parse('http://$_baseUrl/api/v1/supervisor/update'),
+      headers: _headers,
+    );
+
+    if (response.statusCode == 200) {
+      final jsonResponse = jsonDecode(response.body) as Map<String, dynamic>;
+      return jsonResponse;
+    } else if (response.statusCode == 409) {
+      throw Exception(
+          'Request dropped. Another update process is already running.');
+    } else {
+      throw Exception(
+          'Failed to update device. Status code: ${response.statusCode}');
+    }
+  }
 }

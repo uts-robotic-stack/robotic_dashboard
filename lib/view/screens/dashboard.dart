@@ -11,7 +11,6 @@ import 'package:robotic_dashboard/view/components/header.dart';
 import 'package:robotic_dashboard/view/components/log_viewer.dart';
 import 'package:robotic_dashboard/view/components/service_manager.dart';
 import 'package:robotic_dashboard/view/screens/side_menu.dart';
-// import 'package:robotic_dashboard/view/widgets/dropdown_button.dart';
 
 class Dashboard extends StatelessWidget {
   const Dashboard({
@@ -108,14 +107,37 @@ class _DeviceInfoState extends State<DeviceInfo> {
     bool shouldUpdate = await showUpdateWarningDialog(context);
     if (shouldUpdate) {
       _statusColor = Colors.blue;
-      // setState(() {});
-      // _deviceHttpClient.shutdownDevice();
       _showUpdateBar = true;
       setState(() {});
-      await Future.delayed(const Duration(seconds: 10));
-      _showUpdateBar = false;
-      _statusColor = const Color.fromARGB(255, 47, 129, 83);
-      setState(() {});
+      try {
+        final result = await _deviceHttpClient.updateDevice();
+        // Wait for 1 second
+        await Future.delayed(const Duration(seconds: 1));
+        // Show a pop-up with the update statistics
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('Update Complete'),
+              content: Text('Scanned: ${result['Scanned']}\n'
+                  'Updated: ${result['Updated']}\n'
+                  'Failed: ${result['Failed']}'),
+              actions: <Widget>[
+                TextButton(
+                  child: const Text('OK'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            );
+          },
+        );
+      } finally {
+        _showUpdateBar = false;
+        _statusColor = const Color.fromARGB(255, 47, 129, 83);
+        setState(() {});
+      }
     }
   }
 
@@ -195,7 +217,7 @@ class _DeviceInfoState extends State<DeviceInfo> {
                                 _showUpdateWarning(context);
                               },
                               icon: const Icon(
-                                Icons.download,
+                                Icons.cloud_download_outlined,
                                 size: 20,
                                 color: Colors.black,
                               )),
@@ -204,10 +226,6 @@ class _DeviceInfoState extends State<DeviceInfo> {
                           padding: const EdgeInsets.symmetric(horizontal: 4.0),
                           child: IconButton(
                               onPressed: () {
-                                if (!userProvider.isSignedIn) {
-                                  showNotSignInWarning(context);
-                                  return;
-                                }
                                 _showRestartWarning(context);
                               },
                               icon: const Icon(
@@ -220,10 +238,6 @@ class _DeviceInfoState extends State<DeviceInfo> {
                           padding: const EdgeInsets.symmetric(horizontal: 4.0),
                           child: IconButton(
                               onPressed: () {
-                                if (!userProvider.isSignedIn) {
-                                  showNotSignInWarning(context);
-                                  return;
-                                }
                                 _showShutdownWarning(context);
                               },
                               icon: const Icon(

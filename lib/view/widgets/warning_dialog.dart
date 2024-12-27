@@ -151,13 +151,13 @@ Future<bool> showUpdateWarningDialog(BuildContext context) async {
         actions: [
           TextButton(
             onPressed: () {
-              Navigator.of(context).pop(true); // Return true for restart
+              Navigator.of(context).pop(true);
             },
             child: const Text('Ok'),
           ),
           TextButton(
             onPressed: () {
-              Navigator.of(context).pop(false); // Return false to cancel
+              Navigator.of(context).pop(false);
             },
             child: const Text('Cancel'),
           ),
