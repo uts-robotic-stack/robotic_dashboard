@@ -773,7 +773,11 @@ class _ServiceItemState extends State<ServiceItem> {
             scale: 0.8,
             onChanged: (value) {
               _defaultAutoUpdate = value;
-              setState(() {});
+              setState(() {
+                if (value) {
+                  // Add label to data
+                }
+              });
             },
           ),
         )

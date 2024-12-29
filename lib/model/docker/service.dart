@@ -21,6 +21,7 @@ class Service {
   List<VolumeConfig>? volumes;
   ResourceConfig? resources;
   Map<String, String>? sysctls;
+  Map<String, String>? labels;
 
   Service({
     required this.image,
@@ -39,6 +40,7 @@ class Service {
     this.resources,
     this.sysctls,
     this.status,
+    this.labels,
   });
 
   factory Service.fromJson(Map<String, dynamic> json) {
@@ -84,6 +86,9 @@ class Service {
           ? Map<String, String>.from(json['sysctls'] as Map)
           : null,
       status: json['status'] as String?,
+      labels: json['labels'] != null
+          ? Map<String, String>.from(json['labels'] as Map)
+          : null,
     );
   }
 
@@ -109,6 +114,7 @@ class Service {
     }
     if (resources != null) data['resources'] = resources!.toJson();
     if (sysctls != null) data['sysctls'] = sysctls;
+    if (labels != null) data['labels'] = labels;
     return data;
   }
 

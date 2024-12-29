@@ -13,14 +13,14 @@ class DeviceHttpClient {
   };
 
   Future<void> shutdownDevice() async {
-    final response = await http.get(
+    await http.get(
       Uri.parse('http://$_baseUrl/api/v1/device/shutdown'),
       headers: _headers,
     );
   }
 
   Future<void> restartDevice() async {
-    final response = await http.get(
+    await http.get(
       Uri.parse('http://$_baseUrl/api/v1/device/restart'),
       headers: _headers,
     );
