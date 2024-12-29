@@ -751,64 +751,64 @@ class _ServiceItemState extends State<ServiceItem> {
           ),
         )
       ]),
-      const SizedBox(height: 8.0),
-      Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        const Expanded(
-          flex: 1,
-          child: Padding(
-            padding: EdgeInsets.only(top: 10.0),
-            child: Text(
-              'AUTO-UPDATE',
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
-        ),
-        Expanded(
-          flex: 3,
-          child: AdaptiveSwitch(
-            follow: _defaultAutoUpdate,
-            scale: 0.8,
-            onChanged: (value) {
-              _defaultAutoUpdate = value;
-              setState(() {
-                if (value) {
-                  // Add label to data
-                }
-              });
-            },
-          ),
-        )
-      ]),
-      const SizedBox(height: 10.0),
-      Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        const Expanded(
-          flex: 1,
-          child: Padding(
-            padding: EdgeInsets.only(top: 10.0),
-            child: Text(
-              'RESTART',
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
-        ),
-        Expanded(
-          flex: 3,
-          child: AdaptiveSwitch(
-            follow: _defaultAutoRestart,
-            scale: 0.8,
-            onChanged: (value) {
-              _defaultAutoRestart = value;
-              setState(() {});
-            },
-          ),
-        )
-      ]),
+      // const SizedBox(height: 8.0),
+      // Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      //   const Expanded(
+      //     flex: 1,
+      //     child: Padding(
+      //       padding: EdgeInsets.only(top: 10.0),
+      //       child: Text(
+      //         'AUTO-UPDATE',
+      //         style: TextStyle(
+      //           fontSize: 14,
+      //           fontWeight: FontWeight.w600,
+      //         ),
+      //       ),
+      //     ),
+      //   ),
+      //   Expanded(
+      //     flex: 3,
+      //     child: AdaptiveSwitch(
+      //       follow: _defaultAutoUpdate,
+      //       scale: 0.8,
+      //       onChanged: (value) {
+      //         _defaultAutoUpdate = value;
+      //         setState(() {
+      //           if (value) {
+      //             // Add label to data
+      //           }
+      //         });
+      //       },
+      //     ),
+      //   )
+      // ]),
+      // const SizedBox(height: 10.0),
+      // Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      //   const Expanded(
+      //     flex: 1,
+      //     child: Padding(
+      //       padding: EdgeInsets.only(top: 10.0),
+      //       child: Text(
+      //         'RESTART',
+      //         style: TextStyle(
+      //           fontSize: 14,
+      //           fontWeight: FontWeight.w600,
+      //         ),
+      //       ),
+      //     ),
+      //   ),
+      //   Expanded(
+      //     flex: 3,
+      //     child: AdaptiveSwitch(
+      //       follow: _defaultAutoRestart,
+      //       scale: 0.8,
+      //       onChanged: (value) {
+      //         _defaultAutoRestart = value;
+      //         setState(() {});
+      //       },
+      //     ),
+      //   )
+      // ]),
     ];
   }
 
