@@ -441,6 +441,10 @@ class _ServiceItemState extends State<ServiceItem> {
             padding: EdgeInsets.symmetric(horizontal: padding),
             child: IconButton(
               onPressed: () {
+                if (!userProvider.isSignedIn) {
+                  showNotSignInWarning(context);
+                  return;
+                }
                 _showServiceSettings(data);
               },
               icon: Icon(Icons.settings, size: size),
